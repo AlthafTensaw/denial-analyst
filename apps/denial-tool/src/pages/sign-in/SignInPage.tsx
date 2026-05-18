@@ -82,7 +82,7 @@ const containerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: 'var(--tw-color-page-background, #FAFAFB)',
+  background: 'var(--tw-color-surface-bg, #FAFAFB)',
 };
 
 const cardStyle: React.CSSProperties = {
@@ -90,7 +90,7 @@ const cardStyle: React.CSSProperties = {
   padding: 28,
   background: 'white',
   borderRadius: 12,
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
   display: 'flex',
   flexDirection: 'column',
@@ -101,7 +101,7 @@ const titleStyle: React.CSSProperties = {
   margin: 0,
   fontSize: '1.25rem',
   fontWeight: 500,
-  color: 'var(--tw-color-teal-700)',
+  color: 'var(--tw-color-brand-header)',
 };
 
 const subtitleStyle: React.CSSProperties = {
@@ -120,7 +120,7 @@ const labelStyle: React.CSSProperties = {
 
 const selectStyle: React.CSSProperties = {
   padding: '8px 10px',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 6,
   fontSize: '0.875rem',
 };
@@ -133,7 +133,7 @@ const permsHintStyle: React.CSSProperties = {
 
 const buttonStyle: React.CSSProperties = {
   padding: '10px 16px',
-  background: 'var(--tw-color-teal-600)',
+  background: 'var(--tw-color-brand-primary)',
   color: 'white',
   border: 'none',
   borderRadius: 6,

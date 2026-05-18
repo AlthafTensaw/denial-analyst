@@ -24,12 +24,12 @@ interface CurrentStatusBadgeProps {
 
 const KNOWN_STYLES: Record<string, { bg: string; fg: string }> = {
   Filed: {
-    bg: 'var(--tw-color-amber-50)',
-    fg: 'var(--tw-color-amber-800)',
+    bg: 'var(--tw-color-status-warning-bg)',
+    fg: 'var(--tw-color-status-warning-fg)',
   },
   'Clari Opened': {
     bg: 'var(--tw-color-amber-100, #FBE5C4)',
-    fg: 'var(--tw-color-amber-800)',
+    fg: 'var(--tw-color-status-warning-fg)',
   },
   'Clari Closed': {
     bg: 'var(--tw-color-green-50, #EAF3DE)',
@@ -40,14 +40,14 @@ const KNOWN_STYLES: Record<string, { bg: string; fg: string }> = {
     fg: 'var(--tw-color-blue-700)',
   },
   Closed: {
-    bg: 'var(--tw-color-gray-100)',
-    fg: 'var(--tw-color-gray-700)',
+    bg: 'var(--tw-color-input-disabled-bg)',
+    fg: 'var(--tw-color-text-primary)',
   },
 };
 
 const FALLBACK = {
-  bg: 'var(--tw-color-gray-50)',
-  fg: 'var(--tw-color-gray-700)',
+  bg: 'var(--tw-color-surface-muted)',
+  fg: 'var(--tw-color-text-primary)',
 };
 
 export function CurrentStatusBadge({

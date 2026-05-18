@@ -6,9 +6,9 @@
 import type { Confidence } from '../actions/schemas';
 
 const COLOR: Record<Confidence, string> = {
-  high: 'var(--tw-color-teal-600)',
+  high: 'var(--tw-color-brand-primary)',
   medium: 'var(--tw-color-amber-600)',
-  low: 'var(--tw-color-red-600)',
+  low: 'var(--tw-color-text-danger)',
 };
 
 const LABEL: Record<Confidence, string> = {

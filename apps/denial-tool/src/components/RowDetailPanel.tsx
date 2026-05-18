@@ -364,11 +364,11 @@ const metaDefStyle: React.CSSProperties = {
 const statusBannerStyle: React.CSSProperties = {
   marginTop: 12,
   padding: '10px 12px',
-  background: 'var(--tw-color-amber-50)',
-  border: '1px solid var(--tw-color-amber-200, var(--tw-color-amber-50))',
+  background: 'var(--tw-color-status-warning-bg)',
+  border: '1px solid var(--tw-color-amber-200, var(--tw-color-status-warning-bg))',
   borderRadius: 6,
   fontSize: '0.8125rem',
-  color: 'var(--tw-color-amber-800)',
+  color: 'var(--tw-color-status-warning-fg)',
   lineHeight: 1.5,
 };
 
@@ -420,12 +420,12 @@ const actionsStyle: React.CSSProperties = {
   gap: 8,
   alignItems: 'center',
   paddingTop: 12,
-  borderTop: '1px solid var(--tw-color-border)',
+  borderTop: '1px solid var(--tw-color-border-default)',
 };
 
 const primaryBtnStyle: React.CSSProperties = {
   padding: '6px 14px',
-  background: 'var(--tw-color-teal-600)',
+  background: 'var(--tw-color-brand-primary)',
   color: 'white',
   border: 'none',
   borderRadius: 6,
@@ -437,8 +437,8 @@ const primaryBtnStyle: React.CSSProperties = {
 const secondaryBtnStyle: React.CSSProperties = {
   padding: '6px 14px',
   background: 'transparent',
-  color: 'var(--tw-color-teal-700)',
-  border: '1px solid var(--tw-color-teal-700)',
+  color: 'var(--tw-color-brand-header)',
+  border: '1px solid var(--tw-color-brand-header)',
   borderRadius: 6,
   cursor: 'pointer',
   fontSize: '0.875rem',
@@ -447,8 +447,8 @@ const secondaryBtnStyle: React.CSSProperties = {
 
 const stateBannerStyle: React.CSSProperties = {
   padding: 12,
-  background: 'var(--tw-color-gray-50)',
-  border: '1px solid var(--tw-color-border)',
+  background: 'var(--tw-color-surface-muted)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 6,
   fontSize: '0.8125rem',
   color: 'var(--tw-color-text-secondary)',
@@ -458,7 +458,7 @@ const toastStyle: React.CSSProperties = {
   position: 'absolute',
   bottom: 8,
   right: 8,
-  background: 'var(--tw-color-gray-800)',
+  background: 'var(--tw-color-surface-overlay)',
   color: 'white',
   padding: '8px 32px 8px 12px',
   borderRadius: 6,

@@ -92,8 +92,8 @@ export function DenialBulkActionBar({
             style={{
               ...primaryBtnStyle,
               background: gate.ok
-                ? 'var(--tw-color-teal-600)'
-                : 'var(--tw-color-gray-200)',
+                ? 'var(--tw-color-brand-primary)'
+                : 'var(--tw-color-border-muted)',
               color: gate.ok ? 'white' : 'var(--tw-color-gray-600)',
               cursor: gate.ok ? 'pointer' : 'not-allowed',
             }}
@@ -254,10 +254,10 @@ const barStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: 14,
   padding: '10px 16px',
-  background: 'var(--tw-color-teal-50)',
+  background: 'var(--tw-color-table-header-bg)',
   border: '1px solid var(--tw-color-teal-200)',
   borderRadius: 8,
-  color: 'var(--tw-color-teal-800)',
+  color: 'var(--tw-color-brand-primary-hover)',
   fontSize: '0.8125rem',
 };
 
@@ -285,8 +285,8 @@ const primaryBtnStyle: React.CSSProperties = {
 const secondaryBtnStyle: React.CSSProperties = {
   padding: '4px 12px',
   background: 'transparent',
-  color: 'var(--tw-color-teal-700)',
-  border: '1px solid var(--tw-color-teal-700)',
+  color: 'var(--tw-color-brand-header)',
+  border: '1px solid var(--tw-color-brand-header)',
   borderRadius: 4,
   fontSize: '0.8125rem',
   fontWeight: 500,
@@ -297,7 +297,7 @@ const clearSelectionStyle: React.CSSProperties = {
   marginLeft: 'auto',
   background: 'transparent',
   border: 'none',
-  color: 'var(--tw-color-teal-700)',
+  color: 'var(--tw-color-brand-header)',
   cursor: 'pointer',
   textDecoration: 'underline',
   fontSize: '0.8125rem',
@@ -307,7 +307,7 @@ const toastStyle: React.CSSProperties = {
   position: 'absolute',
   top: 'calc(100% + 8px)',
   right: 0,
-  background: 'var(--tw-color-gray-800)',
+  background: 'var(--tw-color-surface-overlay)',
   color: 'white',
   padding: '8px 36px 8px 12px',
   borderRadius: 6,

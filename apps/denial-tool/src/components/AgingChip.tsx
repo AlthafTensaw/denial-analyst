@@ -17,34 +17,34 @@ interface BucketStyle {
 
 const STYLES: Record<string, BucketStyle> = {
   '0-29 day': {
-    bg: 'var(--tw-color-gray-100)',
-    fg: 'var(--tw-color-gray-700)',
+    bg: 'var(--tw-color-input-disabled-bg)',
+    fg: 'var(--tw-color-text-primary)',
   },
   '30-59 day': {
     bg: 'var(--tw-color-blue-50)',
     fg: 'var(--tw-color-blue-700)',
   },
   '60-89 day': {
-    bg: 'var(--tw-color-amber-50)',
-    fg: 'var(--tw-color-amber-700)',
+    bg: 'var(--tw-color-status-warning-bg)',
+    fg: 'var(--tw-color-status-warning-fg)',
   },
   '90-119 day': {
-    bg: 'var(--tw-color-amber-100, var(--tw-color-amber-50))',
-    fg: 'var(--tw-color-amber-800)',
+    bg: 'var(--tw-color-amber-100, var(--tw-color-status-warning-bg))',
+    fg: 'var(--tw-color-status-warning-fg)',
   },
   '120-179 day': {
-    bg: 'var(--tw-color-red-50)',
-    fg: 'var(--tw-color-red-700)',
+    bg: 'var(--tw-color-status-error-bg)',
+    fg: 'var(--tw-color-status-error-fg)',
   },
   '180+ day': {
-    bg: 'var(--tw-color-red-100, var(--tw-color-red-50))',
-    fg: 'var(--tw-color-red-800)',
+    bg: 'var(--tw-color-red-100, var(--tw-color-status-error-bg))',
+    fg: 'var(--tw-color-status-error-fg)',
   },
 };
 
 const FALLBACK: BucketStyle = {
-  bg: 'var(--tw-color-gray-50)',
-  fg: 'var(--tw-color-gray-700)',
+  bg: 'var(--tw-color-surface-muted)',
+  fg: 'var(--tw-color-text-primary)',
 };
 
 export function AgingChip({ bucket }: AgingChipProps): JSX.Element {

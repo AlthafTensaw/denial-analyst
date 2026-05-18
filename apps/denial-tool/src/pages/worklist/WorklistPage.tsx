@@ -223,9 +223,9 @@ const subtitleStyle: React.CSSProperties = {
 
 const selectionPillStyle: React.CSSProperties = {
   fontSize: '0.8125rem',
-  color: 'var(--tw-color-teal-700)',
+  color: 'var(--tw-color-brand-header)',
   padding: '4px 12px',
-  background: 'var(--tw-color-teal-50)',
+  background: 'var(--tw-color-table-header-bg)',
   borderRadius: 6,
   fontWeight: 500,
 };
@@ -239,7 +239,7 @@ const emptyStateStyle: React.CSSProperties = {
 const clearBtnStyle: React.CSSProperties = {
   marginTop: 12,
   padding: '6px 16px',
-  background: 'var(--tw-color-teal-600)',
+  background: 'var(--tw-color-brand-primary)',
   color: 'white',
   border: 'none',
   borderRadius: 6,
@@ -266,7 +266,7 @@ const paginationControlsStyle: React.CSSProperties = {
 
 const pageBtnStyle: React.CSSProperties = {
   padding: '4px 12px',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 4,
   background: 'white',
   cursor: 'pointer',
@@ -275,9 +275,9 @@ const pageBtnStyle: React.CSSProperties = {
 
 const errorBannerStyle: React.CSSProperties = {
   padding: 12,
-  background: 'var(--tw-color-red-50)',
-  border: '1px solid var(--tw-color-red-100, var(--tw-color-red-50))',
+  background: 'var(--tw-color-status-error-bg)',
+  border: '1px solid var(--tw-color-red-100, var(--tw-color-status-error-bg))',
   borderRadius: 6,
-  color: 'var(--tw-color-red-800)',
+  color: 'var(--tw-color-status-error-fg)',
   fontSize: '0.8125rem',
 };

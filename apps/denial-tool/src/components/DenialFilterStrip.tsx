@@ -156,14 +156,14 @@ function FilterDropdown({
         style={{
           ...chipBaseStyle,
           background: active
-            ? 'var(--tw-color-teal-50)'
-            : 'var(--tw-color-gray-50)',
+            ? 'var(--tw-color-table-header-bg)'
+            : 'var(--tw-color-surface-muted)',
           color: active
-            ? 'var(--tw-color-teal-800)'
+            ? 'var(--tw-color-brand-primary-hover)'
             : 'var(--tw-color-text-secondary)',
           borderColor: active
             ? 'var(--tw-color-teal-200)'
-            : 'var(--tw-color-border)',
+            : 'var(--tw-color-border-default)',
         }}
       >
         <span style={chipLabelStyle}>{label}:</span>
@@ -185,7 +185,7 @@ function FilterDropdown({
                 ...dropdownItemStyle,
                 background:
                   opt === value
-                    ? 'var(--tw-color-teal-50)'
+                    ? 'var(--tw-color-table-header-bg)'
                     : undefined,
               }}
               onClick={() => handleSelect(opt)}
@@ -218,16 +218,16 @@ function BooleanToggle({
         ...chipBaseStyle,
         background:
           value === true
-            ? 'var(--tw-color-teal-50)'
-            : 'var(--tw-color-gray-50)',
+            ? 'var(--tw-color-table-header-bg)'
+            : 'var(--tw-color-surface-muted)',
         color:
           value === true
-            ? 'var(--tw-color-teal-800)'
+            ? 'var(--tw-color-brand-primary-hover)'
             : 'var(--tw-color-text-secondary)',
         borderColor:
           value === true
             ? 'var(--tw-color-teal-200)'
-            : 'var(--tw-color-border)',
+            : 'var(--tw-color-border-default)',
       }}
     >
       {value === true ? '✓ ' : ''}
@@ -246,7 +246,7 @@ const stripStyle: React.CSSProperties = {
   gap: 10,
   padding: '10px 16px',
   background: 'white',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 8,
   flexWrap: 'wrap',
 };
@@ -261,7 +261,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 const countPillStyle: React.CSSProperties = {
-  background: 'var(--tw-color-teal-600)',
+  background: 'var(--tw-color-brand-primary)',
   color: 'white',
   fontSize: '0.6875rem',
   padding: '1px 7px',
@@ -298,7 +298,7 @@ const dropdownStyle: React.CSSProperties = {
   top: 'calc(100% + 4px)',
   left: 0,
   background: 'white',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 6,
   padding: 4,
   maxHeight: 320,

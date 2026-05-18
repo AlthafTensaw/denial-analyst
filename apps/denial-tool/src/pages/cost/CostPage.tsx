@@ -55,12 +55,12 @@ export function CostPage(): JSX.Element {
                 ...windowBtnStyle,
                 background:
                   opt.days === windowDays
-                    ? 'var(--tw-color-teal-600)'
+                    ? 'var(--tw-color-brand-primary)'
                     : 'transparent',
                 color:
                   opt.days === windowDays
                     ? 'white'
-                    : 'var(--tw-color-teal-700)',
+                    : 'var(--tw-color-brand-header)',
               }}
             >
               {opt.label}
@@ -166,7 +166,7 @@ function ChartCard({ data }: { data: DailyCostRow[] }) {
                 x2={W - PAD.right}
                 y1={y}
                 y2={y}
-                stroke="var(--tw-color-border)"
+                stroke="var(--tw-color-border-default)"
                 strokeWidth={0.5}
               />
               <text
@@ -188,7 +188,7 @@ function ChartCard({ data }: { data: DailyCostRow[] }) {
         <polyline
           points={points}
           fill="none"
-          stroke="var(--tw-color-teal-600)"
+          stroke="var(--tw-color-brand-primary)"
           strokeWidth={2}
         />
 
@@ -313,7 +313,7 @@ const windowSelectorStyle: React.CSSProperties = {
 
 const windowBtnStyle: React.CSSProperties = {
   padding: '4px 12px',
-  border: '1px solid var(--tw-color-teal-700)',
+  border: '1px solid var(--tw-color-brand-header)',
   borderRadius: 4,
   fontSize: '0.8125rem',
   fontWeight: 500,
@@ -329,7 +329,7 @@ const summaryGridStyle: React.CSSProperties = {
 const summaryCardStyle: React.CSSProperties = {
   padding: 16,
   background: 'white',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 12,
 };
 
@@ -348,7 +348,7 @@ const summaryValueStyle: React.CSSProperties = {
 const chartCardStyle: React.CSSProperties = {
   padding: 16,
   background: 'white',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 12,
 };
 
@@ -361,7 +361,7 @@ const chartTitleStyle: React.CSSProperties = {
 const tableCardStyle: React.CSSProperties = {
   padding: 16,
   background: 'white',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 12,
   overflow: 'auto',
   maxHeight: 480,
@@ -376,14 +376,14 @@ const tableStyle: React.CSSProperties = {
 const thStyle: React.CSSProperties = {
   textAlign: 'left',
   padding: '8px 10px',
-  borderBottom: '1px solid var(--tw-color-border)',
+  borderBottom: '1px solid var(--tw-color-border-default)',
   fontWeight: 500,
   color: 'var(--tw-color-text-secondary)',
 };
 
 const tdStyle: React.CSSProperties = {
   padding: '6px 10px',
-  borderBottom: '1px solid var(--tw-color-border)',
+  borderBottom: '1px solid var(--tw-color-border-default)',
   fontVariantNumeric: 'tabular-nums',
 };
 
@@ -395,9 +395,9 @@ const loadingStyle: React.CSSProperties = {
 
 const errorStyle: React.CSSProperties = {
   padding: 12,
-  background: 'var(--tw-color-red-50)',
-  border: '1px solid var(--tw-color-red-100, var(--tw-color-red-50))',
+  background: 'var(--tw-color-status-error-bg)',
+  border: '1px solid var(--tw-color-red-100, var(--tw-color-status-error-bg))',
   borderRadius: 6,
-  color: 'var(--tw-color-red-800)',
+  color: 'var(--tw-color-status-error-fg)',
   fontSize: '0.8125rem',
 };

@@ -85,7 +85,7 @@ export function ClaimIdCell({ row }: { row: WorklistRow }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <span
         style={{
-          color: 'var(--tw-color-teal-700)',
+          color: 'var(--tw-color-brand-header)',
           fontVariantNumeric: 'tabular-nums',
           fontWeight: 500,
         }}
@@ -198,9 +198,9 @@ export function NextActionCell({ row }: { row: WorklistRow }) {
   const slaDelta = daysUntil(slaDate);
   const slaColor =
     slaDelta < 0
-      ? 'var(--tw-color-red-700)'
+      ? 'var(--tw-color-status-error-fg)'
       : slaDelta <= 3
-        ? 'var(--tw-color-amber-700)'
+        ? 'var(--tw-color-status-warning-fg)'
         : 'var(--tw-color-text-muted)';
 
   return (

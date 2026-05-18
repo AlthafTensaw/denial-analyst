@@ -146,9 +146,9 @@ export function RecommendationGrid({
                   ...rowStyle,
                   gridTemplateColumns: gridTemplate,
                   background: selected
-                    ? 'var(--tw-color-teal-50)'
+                    ? 'var(--tw-color-table-header-bg)'
                     : expanded
-                      ? 'var(--tw-color-gray-50)'
+                      ? 'var(--tw-color-surface-muted)'
                       : undefined,
                 }}
               >
@@ -196,7 +196,7 @@ const gridContainerStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   background: 'white',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 12,
   overflow: 'hidden',
 };
@@ -204,11 +204,11 @@ const gridContainerStyle: React.CSSProperties = {
 const headerRowStyle: React.CSSProperties = {
   display: 'grid',
   alignItems: 'center',
-  background: 'var(--tw-color-teal-50)',
-  color: 'var(--tw-color-teal-700)',
+  background: 'var(--tw-color-table-header-bg)',
+  color: 'var(--tw-color-brand-header)',
   fontSize: '0.8125rem',
   fontWeight: 500,
-  borderBottom: '1px solid var(--tw-color-border)',
+  borderBottom: '1px solid var(--tw-color-border-default)',
 };
 
 const headerCellStyle: React.CSSProperties = {
@@ -227,7 +227,7 @@ const selectCellStyle: React.CSSProperties = {
 const rowStyle: React.CSSProperties = {
   display: 'grid',
   alignItems: 'center',
-  borderBottom: '1px solid var(--tw-color-border)',
+  borderBottom: '1px solid var(--tw-color-border-default)',
   fontSize: '0.875rem',
   cursor: 'pointer',
 };
@@ -239,8 +239,8 @@ const cellStyle: React.CSSProperties = {
 };
 
 const expansionStyle: React.CSSProperties = {
-  background: 'var(--tw-color-gray-50)',
-  borderBottom: '1px solid var(--tw-color-border)',
+  background: 'var(--tw-color-surface-muted)',
+  borderBottom: '1px solid var(--tw-color-border-default)',
   padding: '16px 20px',
 };
 

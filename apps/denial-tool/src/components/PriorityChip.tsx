@@ -24,35 +24,35 @@ interface ChipStyle {
 const CHIP_STYLES: Record<PriorityChipKind, ChipStyle> = {
   TF_WATCH: {
     label: 'TF watch',
-    bg: 'var(--tw-color-red-50)',
-    fg: 'var(--tw-color-red-800)',
+    bg: 'var(--tw-color-status-error-bg)',
+    fg: 'var(--tw-color-status-error-fg)',
   },
   HIGH_DOLLAR: {
     label: 'High $',
-    bg: 'var(--tw-color-amber-50)',
-    fg: 'var(--tw-color-amber-800)',
+    bg: 'var(--tw-color-status-warning-bg)',
+    fg: 'var(--tw-color-status-warning-fg)',
   },
   LOW_CONFIDENCE: {
     label: 'Low conf',
     bg: 'transparent',
-    fg: 'var(--tw-color-red-700)',
+    fg: 'var(--tw-color-status-error-fg)',
     outline: true,
     iconBefore: '⚠',
   },
   DUP_INVESTIGATE: {
     label: 'Dup — investigate',
-    bg: 'var(--tw-color-teal-50)',
-    fg: 'var(--tw-color-teal-800)',
+    bg: 'var(--tw-color-table-header-bg)',
+    fg: 'var(--tw-color-brand-primary-hover)',
   },
   OVERRIDE_PATTERN: {
     label: 'Override pattern',
-    bg: 'var(--tw-color-gray-100)',
-    fg: 'var(--tw-color-gray-800)',
+    bg: 'var(--tw-color-input-disabled-bg)',
+    fg: 'var(--tw-color-surface-overlay)',
   },
   DATA_ERROR: {
     label: 'Data error',
-    bg: 'var(--tw-color-red-50)',
-    fg: 'var(--tw-color-red-800)',
+    bg: 'var(--tw-color-status-error-bg)',
+    fg: 'var(--tw-color-status-error-fg)',
   },
 };
 

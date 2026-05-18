@@ -29,10 +29,10 @@ export function AppLayout(): JSX.Element {
                 style={{
                   ...navLinkInnerStyle,
                   color: isActive
-                    ? 'var(--tw-color-teal-700)'
+                    ? 'var(--tw-color-brand-header)'
                     : 'var(--tw-color-text-secondary)',
                   borderBottomColor: isActive
-                    ? 'var(--tw-color-teal-600)'
+                    ? 'var(--tw-color-brand-primary)'
                     : 'transparent',
                 }}
               >
@@ -47,10 +47,10 @@ export function AppLayout(): JSX.Element {
                   style={{
                     ...navLinkInnerStyle,
                     color: isActive
-                      ? 'var(--tw-color-teal-700)'
+                      ? 'var(--tw-color-brand-header)'
                       : 'var(--tw-color-text-secondary)',
                     borderBottomColor: isActive
-                      ? 'var(--tw-color-teal-600)'
+                      ? 'var(--tw-color-brand-primary)'
                       : 'transparent',
                   }}
                 >
@@ -82,13 +82,13 @@ export function AppLayout(): JSX.Element {
 
 const shellStyle: React.CSSProperties = {
   minHeight: '100vh',
-  background: 'var(--tw-color-page-background, #FAFAFB)',
+  background: 'var(--tw-color-surface-bg)',
 };
 
 const headerStyle: React.CSSProperties = {
   height: 44,
   background: 'white',
-  borderBottom: '1px solid var(--tw-color-border)',
+  borderBottom: '1px solid var(--tw-color-border-default)',
   display: 'flex',
   alignItems: 'center',
   padding: '0 20px',
@@ -97,7 +97,7 @@ const headerStyle: React.CSSProperties = {
 
 const brandStyle: React.CSSProperties = {
   fontWeight: 500,
-  color: 'var(--tw-color-teal-700)',
+  color: 'var(--tw-color-brand-header)',
 };
 
 const crumbsStyle: React.CSSProperties = {
@@ -136,17 +136,17 @@ const userBadgeStyle: React.CSSProperties = {
 
 const roleStyle: React.CSSProperties = {
   padding: '2px 8px',
-  background: 'var(--tw-color-gray-100)',
+  background: 'var(--tw-color-input-disabled-bg)',
   borderRadius: 4,
   fontSize: '0.6875rem',
   fontWeight: 500,
-  color: 'var(--tw-color-gray-700)',
+  color: 'var(--tw-color-text-primary)',
 };
 
 const signOutBtnStyle: React.CSSProperties = {
   background: 'transparent',
   border: 'none',
-  color: 'var(--tw-color-teal-700)',
+  color: 'var(--tw-color-brand-header)',
   cursor: 'pointer',
   fontSize: '0.8125rem',
   textDecoration: 'underline',

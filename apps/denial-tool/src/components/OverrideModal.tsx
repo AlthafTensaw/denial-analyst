@@ -231,7 +231,7 @@ const subtitleStyle: React.CSSProperties = {
 };
 
 const fieldsetStyle: React.CSSProperties = {
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 8,
   padding: 12,
   display: 'flex',
@@ -275,7 +275,7 @@ const fieldLabelStyle: React.CSSProperties = {
 };
 
 const requiredStyle: React.CSSProperties = {
-  color: 'var(--tw-color-red-700)',
+  color: 'var(--tw-color-status-error-fg)',
 };
 
 const optionalStyle: React.CSSProperties = {
@@ -286,12 +286,12 @@ const optionalStyle: React.CSSProperties = {
 
 const errorHintStyle: React.CSSProperties = {
   fontSize: '0.75rem',
-  color: 'var(--tw-color-red-700)',
+  color: 'var(--tw-color-status-error-fg)',
 };
 
 const selectStyle: React.CSSProperties = {
   padding: '8px 10px',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 6,
   fontSize: '0.875rem',
   fontWeight: 400,
@@ -299,7 +299,7 @@ const selectStyle: React.CSSProperties = {
 
 const inputStyle: React.CSSProperties = {
   padding: '8px 10px',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 6,
   fontSize: '0.875rem',
   fontWeight: 400,
@@ -307,7 +307,7 @@ const inputStyle: React.CSSProperties = {
 
 const textareaStyle: React.CSSProperties = {
   padding: '8px 10px',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 6,
   fontSize: '0.875rem',
   fontFamily: 'inherit',
@@ -332,7 +332,7 @@ const actionsStyle: React.CSSProperties = {
 const cancelBtnStyle: React.CSSProperties = {
   padding: '8px 16px',
   background: 'transparent',
-  border: '1px solid var(--tw-color-border)',
+  border: '1px solid var(--tw-color-border-default)',
   borderRadius: 6,
   cursor: 'pointer',
   fontSize: '0.875rem',
@@ -341,7 +341,7 @@ const cancelBtnStyle: React.CSSProperties = {
 
 const submitBtnStyle: React.CSSProperties = {
   padding: '8px 16px',
-  background: 'var(--tw-color-teal-600)',
+  background: 'var(--tw-color-brand-primary)',
   color: 'white',
   border: 'none',
   borderRadius: 6,
