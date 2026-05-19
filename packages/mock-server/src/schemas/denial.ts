@@ -1,33 +1,30 @@
 /**
- * Denial Analysis Tool — Zod schemas (PR-4 rewrite).
+ * Denial Tool — Zod schemas (PR-5 update for Phase 1.5 surfaces).
  *
- * Authored against the live backend OpenAPI spec (denial-tool-service
- * Phase 1 Day 12) and verified against the Pydantic models in
- * denial_tool_service/domain/models.py. This replaces the PR-2 schemas
- * which were built against the v1 tech spec before the backend's
- * Day-8/9/12 scope corrections landed.
+ * This file FULLY REPLACES the PR-4 schemas/denial.ts. Adds Day-13 +
+ * Day-14 endpoint shapes and updates WorkflowStep with completion fields.
  *
- * Key deviations from PR-2:
- *   - Primary identifier is classification_id (UUID), not recommendation_id (int).
- *   - Row state field is `state`, not `status`.
- *   - Money fields (`amount`, `net_pending`) are Decimal strings on the
- *     wire, not numbers. Frontend must Number() for math but render the
- *     raw string for display to avoid float precision drift.
- *   - Worklist row is { claim: ClaimSummary, classification: Classification }
- *     — no flat duplication of payer/dos/etc.
- *   - PriorityChip is 6 values (down from 11). OVERRIDE_PATTERN replaces
- *     the dropped dup-variants and appeal/reviewed chips.
- *   - OverrideReason is 5 values (added `worked_outside_tool` per Day-8).
- *   - Aging-bucket labels match backend: "0-29 day" / "30-59 day" / etc.
- *   - No response envelope. Backend returns bare Pydantic; mock-server
- *     matches that shape so dev and prod look identical.
- *   - Error responses are RFC 7807 problem-details, parsed via lib/problem.
+ * Phase 1.5 additions:
+ *   - WorkflowStep: completed_at + completed_by (nullable, populated after
+ *     POST /v1/classifications/{id}/steps/{n}/complete)
+ *   - ClaimDetail (fat-row claim shape for the row-expand panel)
+ *   - DenialEvent + DenialEventCode (source-evidence region payload)
+ *   - StepCompletionRequest/Response (per-step checkbox flow)
+ *   - RevealPhiRequest/Response (PHI reveal audit endpoint, now wired)
+ *
+ * Everything else is unchanged from PR-4 — UUID identifiers, decimal-
+ * string money, bare-payload wire, 6 PriorityChip + 5 OverrideReason
+ * + 34 CATEGORY_VALUES, single-valued worklist filters, fixed sort.
+ *
+ * Backend handoff doc note: it mentions `state_updated_at` on Classification
+ * (handoff doc line 539) but the OpenAPI still does NOT expose it (Day 14).
+ * Continue to not model it; flagged in BACKEND_HANDBACK §1 for cleanup.
  */
 
 import { z } from 'zod';
 
 // ===========================================================================
-// Enums
+// Enums (unchanged from PR-4)
 // ===========================================================================
 
 export const ConfidenceEnum = z.enum(['high', 'medium', 'low']);
@@ -53,17 +50,6 @@ export const OverrideReasonEnum = z.enum([
 ]);
 export type OverrideReason = z.infer<typeof OverrideReasonEnum>;
 
-/**
- * PriorityChip — 6 values per the backend's consolidation.
- *
- * Per Day-8 scope correction:
- *   - The 4 dup-related chips (DUP_OF_EARLIER, DUP_SIGNAL, etc.) consolidated
- *     into a single DUP_INVESTIGATE chip; the variant signal moved to risk_flags.
- *   - APPEAL_2 / APPEAL_3 / REVIEWED moved to risk_flags + current_status_label.
- *   - MULTI_CODE dropped (covered by risk_flags).
- *   - OVERRIDE_PATTERN added — tool's category has high override rate; surfaces
- *     when override pattern detector flags the row.
- */
 export const PriorityChipEnum = z.enum([
   'HIGH_DOLLAR',
   'LOW_CONFIDENCE',
@@ -74,14 +60,6 @@ export const PriorityChipEnum = z.enum([
 ]);
 export type PriorityChip = z.infer<typeof PriorityChipEnum>;
 
-/**
- * Aging buckets — backend labels include the unit "day" suffix.
- *
- * Note: this is a closed enum on the FE, but the wire schema uses
- * `aging_bucket: string | null` since the backend reserves the right
- * to add new buckets. Frontend treats unknown values as a display-only
- * passthrough.
- */
 export const AgingBucketEnum = z.enum([
   '0-29 day',
   '30-59 day',
@@ -92,16 +70,6 @@ export const AgingBucketEnum = z.enum([
 ]);
 export type AgingBucket = z.infer<typeof AgingBucketEnum>;
 
-/**
- * Bulk-accept rejection reasons. Match backend's
- * `BulkAcceptRejectReason` enum exactly.
- *
- * Note: PR-2/PR-3's `category_mismatch` is NOT a backend reason. The
- * D-19 strict gate is confidence + human-review only; the FE's
- * single-shared-category constraint was an over-enforcement. d19Gate.ts
- * still enforces it client-side as a UX rule but the server will accept
- * cross-category selections — we just won't issue them.
- */
 export const BulkAcceptRejectReasonEnum = z.enum([
   'NOT_FOUND',
   'INVALID_STATE',
@@ -113,21 +81,15 @@ export type BulkAcceptRejectReason = z.infer<
 >;
 
 // ===========================================================================
-// Money — Decimal-as-string
+// Money — Decimal-as-string (unchanged)
 // ===========================================================================
 
-/**
- * Backend serializes Pydantic Decimal as string with this regex:
- *   ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
- *
- * We mirror it. The frontend must Number() for math; render as-is for display.
- */
 export const DecimalStringSchema = z
   .string()
   .regex(/^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$/);
 
 // ===========================================================================
-// Workflow step (per §9.3, backend WorkflowStep model)
+// Workflow step — PR-5 additions: completed_at + completed_by
 // ===========================================================================
 
 export const WorkflowStepSchema = z.object({
@@ -136,73 +98,143 @@ export const WorkflowStepSchema = z.object({
   owner: z.string(),
   sla_days: z.number().int().min(0),
   mode: z.string().default('Manual'),
-  // Backend addition: human-readable bucket like "Day 0-3", "Day 21+".
   day: z.string().nullable().optional(),
+  // Phase 1.5: populated after POST /steps/{n}/complete; null otherwise.
+  completed_at: z.string().nullable().optional(),
+  completed_by: z.string().nullable().optional(),
 });
 export type WorkflowStep = z.infer<typeof WorkflowStepSchema>;
 
 // ===========================================================================
-// Classification
+// Classification (unchanged from PR-4)
 // ===========================================================================
 
 export const ClassificationSchema = z.object({
   classification_id: z.string().uuid(),
   claim_id: z.number().int(),
-  classified_at: z.string(), // ISO datetime with Z suffix
+  classified_at: z.string(),
   tool_version: z.string(),
   training_guide_version: z.string(),
-
-  // Classification output
   primary_category: z.string(),
   training_guide_section: z.string().nullable(),
   alternate_categories: z.array(z.string()).default([]),
   classification_source: ClassificationSourceEnum,
   rule_id: z.string().nullable(),
   confidence: ConfidenceEnum,
-
-  // Workflow
   workflow_steps: z.array(WorkflowStepSchema).default([]),
   branch_chosen: z.string().nullable(),
   recommended_owner: z.string(),
-  sla_next_action_date: z.string(), // ISO date
-
-  // Review gates
+  sla_next_action_date: z.string(),
   priority_chips: z.array(PriorityChipEnum).default([]),
   risk_flags: z.array(z.string()).default([]),
   requires_human_review: z.boolean(),
-
   reasoning_summary: z.string(),
-
-  // State (NOT status — backend field name is `state`)
   state: ClassificationStateEnum.default('recommended'),
 });
 export type Classification = z.infer<typeof ClassificationSchema>;
 
 // ===========================================================================
-// ClaimSummary
+// Claim shapes — Summary (worklist row) vs Detail (row-expand fetch)
 // ===========================================================================
 
 export const ClaimSummarySchema = z.object({
   claim_id: z.number().int(),
   clinic: z.string().nullable(),
   primary_payer_name: z.string().nullable(),
-  dos: z.string(), // ISO date
+  dos: z.string(),
   amount: DecimalStringSchema,
   net_pending: DecimalStringSchema,
   aging_bucket: z.string().nullable(),
   cpt_lines: z.array(z.string()).default([]),
   appeal_status: z.string().nullable(),
-  // Per D-13: backend surfaces any claim with a denial event in the last
-  // 12 months regardless of current STATUS. UI renders a badge when
-  // current_status_label != "Denied" and surfaces the worked-outside-tool
-  // override action prominently.
   current_status_code: z.number().int().nullable().default(null),
   current_status_label: z.string().nullable().default(null),
 });
 export type ClaimSummary = z.infer<typeof ClaimSummarySchema>;
 
+/**
+ * ClaimDetail — fat-row claim payload fetched on row-expand.
+ *
+ * Phase 1.5 addition. Returned by GET /v1/claims/{claim_id}. Adds
+ * patient (PHI), provider/facility, full financial breakdown (4 paid
+ * buckets + 3 pending buckets + net_pending), ICD codes.
+ *
+ * patient_name and mrn are PHI — wrap in <PrivacyField> and fire
+ * reveal-phi on click. field_path conventions: "claim.patient_name" / "claim.mrn".
+ */
+export const ClaimDetailSchema = z.object({
+  claim_id: z.number().int(),
+  clinic_id: z.number().int(),
+  clinic_alias: z.string(),
+  clinic_name: z.string(),
+
+  dos: z.string().nullable(),
+  primary_payer_name: z.string().nullable(),
+  appeal_status: z.string().nullable(),
+  current_status_code: z.number().int(),
+  current_status_label: z.string(),
+  aging_bucket: z.string().nullable(),
+
+  patient_name: z.string().nullable(),
+  mrn: z.string().nullable(),
+
+  provider_name: z.string().nullable(),
+  rendering_provider_name: z.string().nullable(),
+  facility_id: z.number().int().nullable(),
+  facility_name: z.string().nullable(),
+
+  billed: DecimalStringSchema.nullable(),
+  primary_paid: DecimalStringSchema.nullable(),
+  secondary_paid: DecimalStringSchema.nullable(),
+  tertiary_paid: DecimalStringSchema.nullable(),
+  patient_paid: DecimalStringSchema.nullable(),
+  primary_pending: DecimalStringSchema.nullable(),
+  secondary_pending: DecimalStringSchema.nullable(),
+  patient_pending: DecimalStringSchema.nullable(),
+  net_pending: DecimalStringSchema.nullable(),
+
+  cpt_lines: z.array(z.string()).default([]),
+  icd_codes: z.array(z.string()).default([]),
+});
+export type ClaimDetail = z.infer<typeof ClaimDetailSchema>;
+
 // ===========================================================================
-// Worklist (rows + response)
+// Denial events — source-evidence region (Day-13 endpoint, now wired)
+// ===========================================================================
+
+/**
+ * One CARC or RARC code attached to a denial event.
+ *
+ * Backend splits the single Primrose CODE column into carc_codes vs
+ * rarc_codes on output:
+ *   - RARC: codes starting with M or N (e.g., 'M1', 'N418', 'MA01')
+ *   - CARC: everything else (e.g., 'CO-109', '18', 'PR-1')
+ *
+ * `reason_text` is PHI-bearing — wrap in PrivacyField, audit reveal via
+ * /reveal-phi with field_path = `denial_event:{event_id}.{carc|rarc}.{code}.reason_text`.
+ */
+export const DenialEventCodeSchema = z.object({
+  code: z.string(),
+  reason_text: z.string(),
+});
+export type DenialEventCode = z.infer<typeof DenialEventCodeSchema>;
+
+export const DenialEventSchema = z.object({
+  event_id: z.number().int(),
+  occurred_at: z.string().nullable(),
+  procedure_id: z.number().int(),
+  procedure_code: z.string().nullable(),
+  carc_codes: z.array(DenialEventCodeSchema).default([]),
+  rarc_codes: z.array(DenialEventCodeSchema).default([]),
+  is_deleted: z.boolean(),
+});
+export type DenialEvent = z.infer<typeof DenialEventSchema>;
+
+// GET /v1/claims/{claim_id}/denial-events returns a bare array.
+export const DenialEventListSchema = z.array(DenialEventSchema);
+
+// ===========================================================================
+// Worklist (unchanged)
 // ===========================================================================
 
 export const WorklistRowSchema = z.object({
@@ -220,21 +252,6 @@ export const WorklistResponseSchema = z.object({
 });
 export type WorklistResponse = z.infer<typeof WorklistResponseSchema>;
 
-// ===========================================================================
-// Worklist filters — single-valued per backend route signature
-// ===========================================================================
-
-/**
- * GET /v1/claims/worklist query params.
- *
- * Backend takes a single value per filter dimension (not an array).
- * Field names match the actual route handler in main.py — note that
- * these differ from what the handoff doc lists. Trust this, not the doc.
- *
- * The backend imposes a fixed sort (state=recommended floats first, then
- * classified_at desc). There is NO sort_by / sort_dir query parameter.
- * Frontend grid does not expose sort UI.
- */
 export const WorklistRequestSchema = z.object({
   state: ClassificationStateEnum.optional(),
   primary_category: z.string().optional(),
@@ -251,7 +268,7 @@ export const WorklistRequestSchema = z.object({
 export type WorklistRequest = z.infer<typeof WorklistRequestSchema>;
 
 // ===========================================================================
-// Action request/response bodies
+// Action request/response bodies (unchanged)
 // ===========================================================================
 
 export const AcceptRequestSchema = z.object({
@@ -272,14 +289,6 @@ export const CompleteRequestSchema = z.object({
 });
 export type CompleteRequest = z.infer<typeof CompleteRequestSchema>;
 
-/**
- * StateTransitionResponse — what accept/override/complete return.
- *
- * Note: backend returns a transition summary, NOT the updated Classification.
- * The FE must refetch the worklist (or the single classification) to see
- * the new state. The dispatcher's cache invalidation (denial.list tag)
- * handles this automatically when configured.
- */
 export const StateTransitionResponseSchema = z.object({
   classification_id: z.string().uuid(),
   previous_state: ClassificationStateEnum,
@@ -290,10 +299,6 @@ export const StateTransitionResponseSchema = z.object({
 export type StateTransitionResponse = z.infer<
   typeof StateTransitionResponseSchema
 >;
-
-// ===========================================================================
-// Bulk-accept (D-19)
-// ===========================================================================
 
 export const BulkAcceptRequestSchema = z.object({
   classification_ids: z.array(z.string().uuid()).min(1).max(500),
@@ -316,11 +321,101 @@ export const BulkAcceptResponseSchema = z.object({
 export type BulkAcceptResponse = z.infer<typeof BulkAcceptResponseSchema>;
 
 // ===========================================================================
-// Cost monitoring (new in PR-4 — backend ships, FE never modeled)
+// Phase 1.5: Per-step completion
+// ===========================================================================
+
+export const StepCompletionRequestSchema = z.object({
+  notes: z.string().max(500).optional(),
+});
+export type StepCompletionRequest = z.infer<typeof StepCompletionRequestSchema>;
+
+/**
+ * StepCompletionResponse.
+ *
+ * - `next_step_number`: highlight as new "current" focus; null = no more
+ * - `all_steps_completed`: convenience flag derived from workflow
+ * - `auto_completed_classification`: true when backend auto-flipped state
+ *   to 'completed' (only fires when state was accepted/overridden + last
+ *   step was just completed). FE refreshes local state on true.
+ *
+ * Idempotency: re-POSTing the same (classification_id, step_number)
+ * returns the original completion timestamp, not an error.
+ */
+export const StepCompletionResponseSchema = z.object({
+  classification_id: z.string().uuid(),
+  step_number: z.number().int().min(1),
+  completed_at: z.string(),
+  completed_by: z.string(),
+  next_step_number: z.number().int().nullable(),
+  all_steps_completed: z.boolean(),
+  auto_completed_classification: z.boolean(),
+});
+export type StepCompletionResponse = z.infer<
+  typeof StepCompletionResponseSchema
+>;
+
+// ===========================================================================
+// Phase 1.5: PHI reveal audit
+// ===========================================================================
+
+/**
+ * POST /v1/classifications/{id}/reveal-phi body.
+ *
+ * Fire-and-forget audit. HIPAA minimum-necessary requires server log
+ * regardless of UI state.
+ *
+ * field_path conventions (see PrivacyField for usage; FE inlines these):
+ *   - "claim.patient_name"
+ *   - "claim.mrn"
+ *   - "denial_event:{event_id}.carc.{code}.reason_text"
+ *   - "denial_event:{event_id}.rarc.{code}.reason_text"
+ *
+ * purpose: free-text on the wire, FE-consistent strings:
+ *   "worklist_review" | "override_validation" | "appeal_drafting" | "audit_response"
+ */
+/**
+ * RevealPhi purposes — free-text on the wire (backend doesn't validate
+ * a closed set), but FE-side we want consistency so audit reports
+ * aggregate cleanly. Keep this list aligned with the handoff doc's
+ * recommended values:
+ *   - "worklist_review"     — analyst inspecting a row (most common)
+ *   - "override_validation" — analyst validating before overriding
+ *   - "appeal_drafting"     — preparing an appeal letter
+ *   - "audit_response"      — responding to compliance audit
+ *
+ * If a future surface needs a new purpose, add it here rather than
+ * inlining the string at the call site.
+ */
+export const RevealPhiPurposeEnum = z.enum([
+  'worklist_review',
+  'override_validation',
+  'appeal_drafting',
+  'audit_response',
+]);
+export type RevealPhiPurpose = z.infer<typeof RevealPhiPurposeEnum>;
+
+export const RevealPhiRequestSchema = z.object({
+  field_path: z.string().max(200),
+  // Wire schema accepts any string; we ship the FE-side enum separately
+  // so components type-check against the curated list while preserving
+  // forward compat if the backend ever rejects unknowns.
+  purpose: z.string().max(80),
+  notes: z.string().max(500).optional(),
+});
+export type RevealPhiRequest = z.infer<typeof RevealPhiRequestSchema>;
+
+export const RevealPhiResponseSchema = z.object({
+  audit_event_id: z.string().uuid(),
+  recorded_at: z.string(),
+});
+export type RevealPhiResponse = z.infer<typeof RevealPhiResponseSchema>;
+
+// ===========================================================================
+// Cost monitoring (unchanged)
 // ===========================================================================
 
 export const DailyCostRowSchema = z.object({
-  date: z.string(), // ISO date
+  date: z.string(),
   num_llm_calls: z.number().int().min(0),
   total_tokens: z.number().int().min(0),
   total_cost_cents: z.number().int().min(0),
@@ -339,24 +434,15 @@ export const CostSummarySchema = z.object({
 export type CostSummary = z.infer<typeof CostSummarySchema>;
 
 export const CostQuerySchema = z.object({
-  start_date: z.string().optional(), // ISO date
+  start_date: z.string().optional(),
   end_date: z.string().optional(),
 });
 export type CostQuery = z.infer<typeof CostQuerySchema>;
 
 // ===========================================================================
-// Static enums — these don't come from a backend endpoint
+// Static enums (unchanged)
 // ===========================================================================
 
-/**
- * 34 categories per the handoff doc. Backend rejects unknown values via
- * a Pydantic validator; we mirror the closed set here so the FE category
- * filter doesn't offer values the backend will reject.
- *
- * Distributed via the FE artifact rather than fetched from /facets
- * (which doesn't exist). This list updates when the Training Guide
- * version bumps — currently v3.0.
- */
 export const CATEGORY_VALUES = [
   '00. NO ACTION NEEDED',
   '01. Posting / Payment misposted',
@@ -395,11 +481,6 @@ export const CATEGORY_VALUES = [
 ] as const;
 export type Category = (typeof CATEGORY_VALUES)[number];
 
-/**
- * Override reason analyst-facing copy. Verbatim from the backend's
- * OverrideReason enum docstring. Handoff doc says to surface this
- * language exactly — do not paraphrase.
- */
 export const OVERRIDE_REASON_COPY: Record<
   OverrideReason,
   { label: string; description: string; requiresCategory: boolean }

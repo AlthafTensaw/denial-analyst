@@ -78,7 +78,7 @@ export function parseProblemDetails(err: unknown): ProblemDetails | null {
 
   // Try to JSON-parse the message.
   try {
-    const parsed = JSON.parse(err.message);
+    const parsed = JSON.parse(err.message) as unknown;
     if (isProblemDetails(parsed)) return parsed;
   } catch {
     // Not JSON — fall through.

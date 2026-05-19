@@ -46,16 +46,6 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5175,
       strictPort: true,
-      proxy: {
-        '/api': {
-          target: 'https://sensually-explicit-phobia.ngrok-free.dev',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-          headers: {
-            'ngrok-skip-browser-warning': 'true',
-          },
-        },
-      },
     },
     build: {
       target: 'es2022',

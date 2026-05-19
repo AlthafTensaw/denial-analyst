@@ -52,7 +52,7 @@ function loadFilters(userId: string | undefined): WorklistFilters {
   try {
     const raw = window.localStorage.getItem(storageKeyFor(userId));
     if (!raw) return DEFAULT_FILTERS;
-    const parsed = JSON.parse(raw);
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
     return { ...DEFAULT_FILTERS, ...parsed };
   } catch {
     return DEFAULT_FILTERS;
@@ -120,9 +120,7 @@ export function useWorklistFilters(): UseWorklistFiltersResult {
 
 function countActiveFilters(filters: WorklistFilters): number {
   let count = 0;
-  for (const key of Object.keys(DEFAULT_FILTERS) as Array<
-    keyof WorklistFilters
-  >) {
+  for (const key of Object.keys(DEFAULT_FILTERS) as (keyof WorklistFilters)[]) {
     if (filters[key] !== DEFAULT_FILTERS[key]) count += 1;
   }
   return count;

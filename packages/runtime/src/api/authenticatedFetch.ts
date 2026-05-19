@@ -105,6 +105,10 @@ async function buildHeaders(
   headers.set('X-Build-Version', config.app.buildVersion);
   headers.set('X-App-Id', config.app.id);
 
+  if (config.api.baseUrl.includes('ngrok')) {
+    headers.set('ngrok-skip-browser-warning', 'true');
+  }
+
   const token = await getTokenProvider().getAccessToken();
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
@@ -223,9 +227,9 @@ export async function authenticatedFetch<T = unknown>(
     !response.ok &&
     body &&
     typeof body === 'object' &&
-    'detail' in (body as any)
+    'detail' in (body as Record<string, unknown>)
   ) {
-    const detailParse = dataSchema.safeParse((body as any).detail);
+    const detailParse = dataSchema.safeParse((body as Record<string, unknown>).detail);
     if (detailParse.success) {
       return detailParse.data as T;
     }

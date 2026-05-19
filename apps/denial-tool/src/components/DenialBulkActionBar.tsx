@@ -15,8 +15,8 @@
  */
 
 import { useState } from 'react';
-import { useAuthStore } from '@tensaw/runtime';
 import { useActionMutation } from '@tensaw/actions';
+import { useAuthStore } from '@tensaw/runtime';
 import type {
   BulkAcceptResponse,
   WorklistRow,
@@ -36,7 +36,7 @@ export function DenialBulkActionBar({
   onMutationComplete,
 }: DenialBulkActionBarProps): JSX.Element | null {
   const [toast, setToast] = useState<string | null>(null);
-  const [fireBulkAccept, bulkAccept] = useActionMutation('denial.bulk-accept');
+  const [mutateBulkAccept, { isLoading: bulkAcceptPending }] = useActionMutation('denial.bulk-accept');
   const user = useAuthStore((s) => s.user);
 
   if (selectedRowMap.size === 0) return null;
@@ -46,12 +46,12 @@ export function DenialBulkActionBar({
   const handleAcceptAll = async () => {
     if (!gate.ok) return;
     try {
-      const result = await fireBulkAccept({
+      const result = await mutateBulkAccept({
         classification_ids: selectedRows.map(
           (r) => r.classification.classification_id,
         ),
       });
-      if (!result.ok) throw result.error;
+      if (!result.ok) throw new Error(result.error.message);
       const res = result.data as BulkAcceptResponse;
 
       if (res.rejected.length === 0) {
@@ -87,18 +87,18 @@ export function DenialBulkActionBar({
         <span title={gate.ok ? undefined : gate.reason}>
           <button
             type="button"
-            disabled={!gate.ok || bulkAccept.isLoading}
+            disabled={!gate.ok || bulkAcceptPending}
             onClick={() => void handleAcceptAll()}
             style={{
               ...primaryBtnStyle,
               background: gate.ok
-                ? 'var(--tw-color-brand-primary)'
-                : 'var(--tw-color-border-muted)',
-              color: gate.ok ? 'white' : 'var(--tw-color-gray-600)',
+                ? 'var(--tw-color-brand-primary, #14B8A6)'
+                : '#D1D5DB',
+              color: gate.ok ? 'white' : 'var(--tw-color-text-secondary)',
               cursor: gate.ok ? 'pointer' : 'not-allowed',
             }}
           >
-            {bulkAccept.isLoading ? 'Accepting…' : 'Accept all'}
+            {bulkAcceptPending ? 'Accepting…' : 'Accept all'}
           </button>
         </span>
         <button
@@ -122,7 +122,7 @@ export function DenialBulkActionBar({
           {toast}
           <button
             type="button"
-            onClick={() => setToast(null)}
+            onClick={() => { setToast(null); }}
             style={toastCloseStyle}
             aria-label="Dismiss"
           >
@@ -227,7 +227,7 @@ function triggerDownload(blob: Blob, filename: string): void {
   a.click();
   document.body.removeChild(a);
   // Defer revocation to give the browser a tick to start the download.
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setTimeout(() => { URL.revokeObjectURL(url); }, 1000);
 }
 
 // ---------------------------------------------------------------------------
@@ -254,10 +254,10 @@ const barStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: 14,
   padding: '10px 16px',
-  background: 'var(--tw-color-table-header-bg)',
-  border: '1px solid var(--tw-color-teal-200)',
+  background: 'var(--tw-color-table-header-bg, #EBF7F6)',
+  border: '1px solid var(--tw-color-border-focus, #A7DEDA)',
   borderRadius: 8,
-  color: 'var(--tw-color-brand-primary-hover)',
+  color: 'var(--tw-color-brand-header, #149A9A)',
   fontSize: '0.8125rem',
 };
 
@@ -266,7 +266,7 @@ const countStyle: React.CSSProperties = {
 };
 
 const dividerStyle: React.CSSProperties = {
-  color: 'var(--tw-color-teal-200)',
+  color: 'var(--tw-color-border-focus, #A7DEDA)',
 };
 
 const actionsStyle: React.CSSProperties = {
@@ -285,8 +285,8 @@ const primaryBtnStyle: React.CSSProperties = {
 const secondaryBtnStyle: React.CSSProperties = {
   padding: '4px 12px',
   background: 'transparent',
-  color: 'var(--tw-color-brand-header)',
-  border: '1px solid var(--tw-color-brand-header)',
+  color: 'var(--tw-color-brand-header, #149A9A)',
+  border: '1px solid var(--tw-color-brand-header, #149A9A)',
   borderRadius: 4,
   fontSize: '0.8125rem',
   fontWeight: 500,
@@ -297,7 +297,7 @@ const clearSelectionStyle: React.CSSProperties = {
   marginLeft: 'auto',
   background: 'transparent',
   border: 'none',
-  color: 'var(--tw-color-brand-header)',
+  color: 'var(--tw-color-brand-header, #149A9A)',
   cursor: 'pointer',
   textDecoration: 'underline',
   fontSize: '0.8125rem',
@@ -307,7 +307,7 @@ const toastStyle: React.CSSProperties = {
   position: 'absolute',
   top: 'calc(100% + 8px)',
   right: 0,
-  background: 'var(--tw-color-surface-overlay)',
+  background: '#1F2937',
   color: 'white',
   padding: '8px 36px 8px 12px',
   borderRadius: 6,

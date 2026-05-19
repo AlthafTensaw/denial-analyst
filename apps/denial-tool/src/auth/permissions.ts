@@ -53,7 +53,7 @@ export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
 export function resolvePermissions(roles: readonly Role[]): Permission[] {
   const set = new Set<Permission>();
   for (const role of roles) {
-    for (const perm of ROLE_PERMISSIONS[role] ?? []) set.add(perm);
+    for (const perm of ROLE_PERMISSIONS[role]) set.add(perm);
   }
   return Array.from(set);
 }

@@ -29,14 +29,14 @@ async function doBootstrap(): Promise<void> {
   // consistent.
   registerDenialActions();
 
-  // Start MSW only in development. In test, msw/node is wired by
+  // Start MSW only in development and when enabled. In test, msw/node is wired by
   // vitest.setup.ts. In production, the real backend handles requests.
-  if (import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_SERVER !== 'false') {
+  const { config } = await import('@tensaw/runtime');
+  if (import.meta.env.DEV && config.enableMsw) {
     try {
       const { setupWorker } = await import('msw/browser');
       const { buildDenialHandlers } = await import('@tensaw/mock-server');
-      const { config } = await import('@tensaw/runtime');
-      const worker = setupWorker(...(buildDenialHandlers(config.api.baseUrl) as any));
+      const worker = setupWorker(...buildDenialHandlers(config.api.baseUrl));
       await worker.start({ quiet: true, onUnhandledRequest: 'bypass' });
     } catch (e) {
       console.warn('[bootstrap] MSW failed to start:', e);

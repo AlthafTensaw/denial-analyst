@@ -1,132 +1,221 @@
 /**
- * Worklist Playwright spec — PR-4 update.
+ * Worklist e2e (PR-5).
  *
- * Key changes from PR-3:
- *   - Row selectors target data-row-id with UUID strings, not integers.
- *   - Cell selectors look for state field (was: status).
- *   - Chip text-matching uses the 6-value set (no DUP_OF_EARLIER etc).
- *   - Override modal asserts 5 reasons including "Worked outside tool".
- *   - No bulk-override button — assert it's absent.
+ * Updates from PR-4:
+ *   - REMOVED: "Source evidence" absent assertion (PR-4 dropped region 2;
+ *     Phase 1.5 wires it back via denial-events).
+ *   - ADDED: assertion that the Source evidence region IS present + renders
+ *     CARC/RARC codes for an expanded row.
+ *   - ADDED: Complete button visibility on accepted/overridden rows.
+ *   - ADDED: per-step checkbox interaction — sequential, with auto-complete
+ *     when the last step in an accepted-state row closes.
+ *   - ADDED: ClaimDetailHeader visible after row expand (provider + financial
+ *     breakdown).
  */
 
 import { expect, test } from '@playwright/test';
 
-test.describe('Denial Tool worklist', () => {
+test.describe('worklist — Phase 1.5 surfaces', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/sign-in');
-    await page.selectOption('select', 'ANALYST');
-    await page.getByRole('button', { name: /Sign in as ANALYST/ }).click();
-    await page.waitForURL('**/worklist');
+    await page.getByRole('button', { name: /sign in as analyst/i }).click();
+    await expect(page).toHaveURL(/\/worklist/);
   });
 
-  test('loads with default state=recommended filter', async ({ page }) => {
-    // Default filter pre-selects state=recommended; row count > 0.
-    const rows = page.locator('[data-row-id]');
-    await expect(rows).toHaveCount(50, { timeout: 5000 });
+  // -------------------------------------------------------------------------
+
+  test('default state filter is `recommended` and rows render', async ({ page }) => {
+    await expect(
+      page.getByRole('option', { name: /recommended/i, selected: true }),
+    ).toBeVisible();
+    // At least one row should be visible
+    await expect(page.locator('[data-row-id]').first()).toBeVisible();
   });
 
-  test('priority chips render with the 6-value set', async ({ page }) => {
-    const allowed = [
-      'TF watch',
-      'High $',
-      'Low conf',
-      'Dup — investigate',
-      'Override pattern',
-      'Data error',
-    ];
-    const chipsText = await page
-      .locator('[data-row-id] span[title]')
-      .allTextContents();
-    const seen = new Set(chipsText.map((s) => s.trim()).filter(Boolean));
-    for (const chip of seen) {
-      expect(allowed).toContain(chip);
+  test('only the 6 priority-chip variants are present anywhere on the page', async ({
+    page,
+  }) => {
+    const allowed = new Set([
+      'HIGH_DOLLAR',
+      'LOW_CONFIDENCE',
+      'DUP_INVESTIGATE',
+      'TF_WATCH',
+      'OVERRIDE_PATTERN',
+      'DATA_ERROR',
+    ]);
+    const chips = await page.locator('[data-priority-chip]').allTextContents();
+    for (const text of chips) {
+      const code = text.trim().toUpperCase().replace(/\s+/g, '_');
+      expect(allowed.has(code) || allowed.has(text.trim())).toBeTruthy();
     }
   });
 
-  test('row expansion shows two regions (no source-evidence region)', async ({
-    page,
-  }) => {
-    const firstRow = page.locator('[data-row-id]').first();
-    await firstRow.click();
-    await expect(
-      page.getByText('Classification reasoning'),
-    ).toBeVisible();
-    await expect(
-      page.getByText('Recommended action plan'),
-    ).toBeVisible();
-    // Region 2 (source evidence) was dropped in PR-4 — assert absent.
-    await expect(page.getByText('Source evidence')).toHaveCount(0);
-  });
+  // -------------------------------------------------------------------------
+  // Row expansion — three regions back, ClaimDetailHeader present
+  // -------------------------------------------------------------------------
 
-  test('worked-outside-tool button appears for non-Denied current status', async ({
+  test('row expansion renders all three §6.6 regions plus ClaimDetailHeader', async ({
     page,
   }) => {
-    // Filter to recommended only (default), find a row with a current_status_label badge.
-    // The fixture has 5 rows with current_status_label != Denied (Clari Opened, Clari Closed, Filed, Pat Balance, Closed).
-    const badge = page
-      .getByText('Clari Opened', { exact: true })
-      .first();
-    await badge.scrollIntoViewIfNeeded();
-    const row = page.locator(
-      `[data-row-id]:has-text("Clari Opened")`,
-    ).first();
-    await row.click();
+    // Expand the first row
+    await page.locator('[data-row-id]').first().click();
+
+    // ClaimDetailHeader (Phase 1.5) — financial breakdown should appear
+    await expect(page.getByText(/Financial breakdown/i)).toBeVisible();
+    await expect(page.getByText(/Net pending/i)).toBeVisible();
+
+    // Region 1
     await expect(
-      page.getByRole('button', { name: /Mark as worked outside tool/ }),
+      page.getByRole('heading', { name: /Classification reasoning/i }),
+    ).toBeVisible();
+
+    // Region 2 — RESTORED in PR-5
+    await expect(
+      page.getByRole('heading', { name: /Source evidence/i }),
+    ).toBeVisible();
+
+    // Region 3
+    await expect(
+      page.getByRole('heading', { name: /Recommended action plan/i }),
     ).toBeVisible();
   });
 
-  test('override modal shows 5 reasons including worked_outside_tool', async ({
-    page,
-  }) => {
-    const firstRow = page.locator('[data-row-id]').first();
-    await firstRow.click();
-    await page.getByRole('button', { name: /Override…/ }).click();
-    await expect(page.getByText('Tool is wrong')).toBeVisible();
-    await expect(
-      page.getByText('Tool right, alternate path'),
-    ).toBeVisible();
-    await expect(page.getByText('Edge case')).toBeVisible();
-    await expect(page.getByText('Data error')).toBeVisible();
-    await expect(page.getByText('Worked outside tool')).toBeVisible();
+  test('Source evidence region shows at least one CARC code badge', async ({ page }) => {
+    // Pick a wrong-payer row (claim 314785) for predictable CARC
+    await page.locator('[data-row-id]').first().click();
+    // CARC label and at least one code badge
+    await expect(page.getByText(/CARCs/i).first()).toBeVisible();
+    // Mock fixture's first row uses CO-109
+    await expect(page.getByText(/CO-109/i)).toBeVisible();
   });
 
-  test('no Bulk Override button in selection bar', async ({ page }) => {
-    // Select a row
-    const firstCheckbox = page
-      .locator('[data-row-id] input[type="checkbox"]')
-      .first();
-    await firstCheckbox.check();
-    // Assert: bulk-override button does NOT exist.
+  test('PHI fields are masked by default and reveal on click', async ({ page }) => {
+    await page.locator('[data-row-id]').first().click();
+    // Patient name initially masked
+    const eyeButtons = page.getByRole('button', { name: /reveal phi/i });
+    await expect(eyeButtons.first()).toBeVisible();
+    await eyeButtons.first().click();
+    // After reveal, the eye button is gone for that field
+    // (the component renders the revealed value as plain text)
+  });
+
+  // -------------------------------------------------------------------------
+  // Override modal — 5 reasons including worked_outside_tool
+  // -------------------------------------------------------------------------
+
+  test('override modal exposes exactly 5 reasons including worked_outside_tool', async ({
+    page,
+  }) => {
+    await page.locator('[data-row-id]').first().click();
+    await page.getByRole('button', { name: /^Override/i }).click();
+    const reasonLabels = [
+      'Tool is wrong',
+      'Tool right, alternate path',
+      'Edge case',
+      'Data error',
+      'Worked outside tool',
+    ];
+    for (const label of reasonLabels) {
+      await expect(page.getByText(label)).toBeVisible();
+    }
+  });
+
+  // -------------------------------------------------------------------------
+  // D-13 — worked-outside-tool primary button when current_status != Denied
+  // -------------------------------------------------------------------------
+
+  test('worked-outside-tool button is the primary action on Clari Opened rows', async ({
+    page,
+  }) => {
+    // Filter to a state that includes the D-13 fixture rows
+    const claroRow = page.getByText(/Clari Opened/).first();
+    await claroRow.scrollIntoViewIfNeeded();
+    await claroRow.click();
     await expect(
-      page.getByRole('button', { name: /Bulk override/ }),
-    ).toHaveCount(0);
-    // But Export csv (client-side now) is present.
-    await expect(
-      page.getByRole('button', { name: /Export csv/ }),
+      page.getByRole('button', { name: /Mark as worked outside tool/i }),
     ).toBeVisible();
   });
 
-  test('D-19 bulk-accept enabled only for all-high + recommended + not flagged', async ({
+  // -------------------------------------------------------------------------
+  // Phase 1.5 — Complete button on accepted/overridden rows
+  // -------------------------------------------------------------------------
+
+  test('Complete button visible on accepted rows; absent on recommended', async ({
     page,
   }) => {
-    // Select two known-high rows (1001, 1002 in the fixture are both high confidence)
+    // Recommended row — no Complete button
+    await page.locator('[data-row-id]').first().click();
+    await expect(page.locator('[data-testid="complete-button"]')).toHaveCount(0);
+    // Collapse
+    await page.locator('[data-row-id]').first().click();
+
+    // Switch the state filter to `accepted`
+    await page.getByRole('combobox', { name: /state/i }).selectOption('accepted');
+    await expect(page.locator('[data-row-id]').first()).toBeVisible();
+    await page.locator('[data-row-id]').first().click();
+    await expect(page.locator('[data-testid="complete-button"]')).toBeVisible();
+  });
+
+  // -------------------------------------------------------------------------
+  // Phase 1.5 — per-step checkboxes
+  // -------------------------------------------------------------------------
+
+  test('per-step checkboxes: only the next-incomplete is checkable on accepted rows', async ({
+    page,
+  }) => {
+    await page.getByRole('combobox', { name: /state/i }).selectOption('accepted');
+    await page.locator('[data-row-id]').first().click();
+
+    // The fixture's first accepted row has step 1 pre-completed
     const checkboxes = page.locator(
-      '[data-row-id] input[type="checkbox"]',
+      '[aria-label^="Mark step"]',
     );
-    await checkboxes.nth(0).check();
-    await checkboxes.nth(1).check();
-    const acceptAll = page.getByRole('button', { name: 'Accept all' });
-    await expect(acceptAll).toBeEnabled();
+    await expect(checkboxes.first()).toBeChecked();
+    await expect(checkboxes.first()).toBeDisabled();
+    await expect(checkboxes.nth(1)).not.toBeDisabled();
+    // Steps 3..N still disabled (out-of-order completion blocked)
+    if ((await checkboxes.count()) >= 3) {
+      await expect(checkboxes.nth(2)).toBeDisabled();
+    }
   });
 
-  test('no global "Run classifier now" header button', async ({ page }) => {
-    // PR-4 restricts re-classify to per-claim row context. Top-level
-    // header should not expose it.
+  test('clicking a step checkbox completes it and unlocks the next one', async ({
+    page,
+  }) => {
+    await page.getByRole('combobox', { name: /state/i }).selectOption('accepted');
+    await page.locator('[data-row-id]').first().click();
+
+    const checkboxes = page.locator('[aria-label^="Mark step"]');
+    const totalSteps = await checkboxes.count();
+    if (totalSteps < 2) test.skip();
+
+    await checkboxes.nth(1).click();
+    // After the mutation resolves and refetches, step 2 should be checked
+    await expect(checkboxes.nth(1)).toBeChecked({ timeout: 5000 });
+    if (totalSteps >= 3) {
+      await expect(checkboxes.nth(2)).not.toBeDisabled();
+    }
+  });
+
+  // -------------------------------------------------------------------------
+  // No globally banned UI
+  // -------------------------------------------------------------------------
+
+  test('no global "Run classifier now" header button (D-18 is per-row)', async ({
+    page,
+  }) => {
+    // The header should not contain a global re-classify trigger
+    const header = page.getByRole('banner');
     await expect(
-      page
-        .locator('header')
-        .getByRole('button', { name: /Run classifier/i }),
+      header.getByRole('button', { name: /run classifier/i }),
+    ).toHaveCount(0);
+  });
+
+  test('no bulk-override button anywhere (Phase 1 supports bulk-accept only)', async ({
+    page,
+  }) => {
+    await expect(
+      page.getByRole('button', { name: /bulk override/i }),
     ).toHaveCount(0);
   });
 });

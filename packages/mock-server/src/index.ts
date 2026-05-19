@@ -64,7 +64,7 @@ export {
 export { buildARHandlers } from './handlers/arHandlers';
 export { resetMockARState } from './handlers/arState';
 
-// Denial Analysis Tool (PR-4 — rewritten against backend OpenAPI Day 12)
+// Denial Analysis Tool (PR-4 & PR-5 — rewritten against backend OpenAPI Day 14)
 export {
   // Enums
   ConfidenceEnum,
@@ -74,17 +74,25 @@ export {
   PriorityChipEnum,
   AgingBucketEnum,
   BulkAcceptRejectReasonEnum,
+  RevealPhiPurposeEnum,
   // Schemas
   DecimalStringSchema,
   WorkflowStepSchema,
   ClassificationSchema,
   ClaimSummarySchema,
+  ClaimDetailSchema,
+  DenialEventCodeSchema,
+  DenialEventSchema,
   WorklistRowSchema,
   WorklistResponseSchema,
   WorklistRequestSchema,
   AcceptRequestSchema,
   OverrideRequestSchema,
   CompleteRequestSchema,
+  StepCompletionRequestSchema,
+  StepCompletionResponseSchema,
+  RevealPhiRequestSchema,
+  RevealPhiResponseSchema,
   StateTransitionResponseSchema,
   BulkAcceptRequestSchema,
   BulkAcceptRejectionSchema,
@@ -103,15 +111,23 @@ export {
   type PriorityChip,
   type AgingBucket,
   type BulkAcceptRejectReason,
+  type RevealPhiPurpose,
   type WorkflowStep,
   type Classification,
   type ClaimSummary,
+  type ClaimDetail,
+  type DenialEvent,
+  type DenialEventCode,
   type WorklistRow,
   type WorklistResponse,
   type WorklistRequest,
   type AcceptRequest,
   type OverrideRequest,
   type CompleteRequest,
+  type StepCompletionRequest,
+  type StepCompletionResponse,
+  type RevealPhiRequest,
+  type RevealPhiResponse,
   type StateTransitionResponse,
   type BulkAcceptRequest,
   type BulkAcceptRejection,

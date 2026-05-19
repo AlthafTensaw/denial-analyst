@@ -26,11 +26,12 @@ export function SignInPage(): JSX.Element {
   const signIn = useAuthStore((s) => s.signIn);
 
   const handleSubmit = () => {
+    const email = `${role.toLowerCase()}@primrose.dev`;
     signIn({
       user: {
         userId: `mock-${role.toLowerCase()}-sub`,
-        username: `${role.toLowerCase()}@primrose.dev`,
-        email: `${role.toLowerCase()}@primrose.dev`,
+        username: email.split('@')[0] ?? email,
+        email,
         fullName: role === 'ANALYST' ? 'Renita K.' : role === 'MANAGER' ? 'Roopa M.' : 'Vijaya R.',
         roles: [role],
         permissions: resolvePermissions([role]),
@@ -54,7 +55,7 @@ export function SignInPage(): JSX.Element {
           Role
           <select
             value={role}
-            onChange={(e) => setRole(e.target.value as Role)}
+            onChange={(e) => { setRole(e.target.value as Role); }}
             style={selectStyle}
           >
             {ALL_ROLES.map((r) => (
@@ -82,7 +83,7 @@ const containerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: 'var(--tw-color-surface-bg, #FAFAFB)',
+  background: 'var(--tw-color-surface-muted, #FAFAFB)',
 };
 
 const cardStyle: React.CSSProperties = {
@@ -101,7 +102,7 @@ const titleStyle: React.CSSProperties = {
   margin: 0,
   fontSize: '1.25rem',
   fontWeight: 500,
-  color: 'var(--tw-color-brand-header)',
+  color: 'var(--tw-color-brand-header, #149A9A)',
 };
 
 const subtitleStyle: React.CSSProperties = {
@@ -133,7 +134,7 @@ const permsHintStyle: React.CSSProperties = {
 
 const buttonStyle: React.CSSProperties = {
   padding: '10px 16px',
-  background: 'var(--tw-color-brand-primary)',
+  background: 'var(--tw-color-brand-primary, #14B8A6)',
   color: 'white',
   border: 'none',
   borderRadius: 6,

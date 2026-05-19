@@ -141,25 +141,25 @@ export function RecommendationGrid({
               <div
                 role="row"
                 data-row-id={id}
-                onClick={() => onToggleExpand(expanded ? null : id)}
+                onClick={() => { onToggleExpand(expanded ? null : id); }}
                 style={{
                   ...rowStyle,
                   gridTemplateColumns: gridTemplate,
                   background: selected
-                    ? 'var(--tw-color-table-header-bg)'
+                    ? 'var(--tw-color-table-header-bg, #EBF7F6)'
                     : expanded
-                      ? 'var(--tw-color-surface-muted)'
+                      ? 'var(--tw-color-surface-muted, #F9FAFB)'
                       : undefined,
                 }}
               >
                 <div
                   style={selectCellStyle}
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => { e.stopPropagation(); }}
                 >
                   <input
                     type="checkbox"
                     checked={selected}
-                    onChange={() => toggleRow(row)}
+                    onChange={() => { toggleRow(row); }}
                     aria-label={`Select row ${row.claim.claim_id}`}
                     disabled={!eligible}
                   />
@@ -204,8 +204,8 @@ const gridContainerStyle: React.CSSProperties = {
 const headerRowStyle: React.CSSProperties = {
   display: 'grid',
   alignItems: 'center',
-  background: 'var(--tw-color-table-header-bg)',
-  color: 'var(--tw-color-brand-header)',
+  background: 'var(--tw-color-table-header-bg, #EBF7F6)',
+  color: 'var(--tw-color-brand-header, #149A9A)',
   fontSize: '0.8125rem',
   fontWeight: 500,
   borderBottom: '1px solid var(--tw-color-border-default)',
@@ -239,7 +239,7 @@ const cellStyle: React.CSSProperties = {
 };
 
 const expansionStyle: React.CSSProperties = {
-  background: 'var(--tw-color-surface-muted)',
+  background: 'var(--tw-color-surface-muted, #F9FAFB)',
   borderBottom: '1px solid var(--tw-color-border-default)',
   padding: '16px 20px',
 };

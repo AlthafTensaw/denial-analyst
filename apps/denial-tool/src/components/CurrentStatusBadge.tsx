@@ -24,30 +24,30 @@ interface CurrentStatusBadgeProps {
 
 const KNOWN_STYLES: Record<string, { bg: string; fg: string }> = {
   Filed: {
-    bg: 'var(--tw-color-status-warning-bg)',
-    fg: 'var(--tw-color-status-warning-fg)',
+    bg: 'var(--tw-color-status-warning-bg, #FFFBEB)',
+    fg: 'var(--tw-color-status-warning-fg, #D97706)',
   },
   'Clari Opened': {
-    bg: 'var(--tw-color-amber-100, #FBE5C4)',
-    fg: 'var(--tw-color-status-warning-fg)',
+    bg: 'var(--tw-color-status-warning-bg, #FFFBEB)',
+    fg: 'var(--tw-color-status-warning-fg, #D97706)',
   },
   'Clari Closed': {
-    bg: 'var(--tw-color-green-50, #EAF3DE)',
-    fg: 'var(--tw-color-green-800, #27500A)',
+    bg: 'var(--tw-color-status-success-bg, #ECFDF5)',
+    fg: 'var(--tw-color-status-success-fg, #059669)',
   },
   'Pat Balance': {
-    bg: 'var(--tw-color-blue-50)',
-    fg: 'var(--tw-color-blue-700)',
+    bg: 'var(--tw-color-status-info-bg, #EFF6FF)',
+    fg: 'var(--tw-color-status-info-fg, #2563EB)',
   },
   Closed: {
-    bg: 'var(--tw-color-input-disabled-bg)',
-    fg: 'var(--tw-color-text-primary)',
+    bg: 'var(--tw-color-border-muted, #E5E7EB)',
+    fg: 'var(--tw-color-text-secondary, #4B5563)',
   },
 };
 
 const FALLBACK = {
-  bg: 'var(--tw-color-surface-muted)',
-  fg: 'var(--tw-color-text-primary)',
+  bg: 'var(--tw-color-surface-muted, #F9FAFB)',
+  fg: 'var(--tw-color-text-secondary, #4B5563)',
 };
 
 export function CurrentStatusBadge({

@@ -50,17 +50,17 @@ export function CostPage(): JSX.Element {
             <button
               key={opt.days}
               type="button"
-              onClick={() => setWindowDays(opt.days)}
+              onClick={() => { setWindowDays(opt.days); }}
               style={{
                 ...windowBtnStyle,
                 background:
                   opt.days === windowDays
-                    ? 'var(--tw-color-brand-primary)'
+                    ? 'var(--tw-color-brand-primary, #14B8A6)'
                     : 'transparent',
                 color:
                   opt.days === windowDays
                     ? 'white'
-                    : 'var(--tw-color-brand-header)',
+                    : 'var(--tw-color-brand-header, #149A9A)',
               }}
             >
               {opt.label}
@@ -73,9 +73,9 @@ export function CostPage(): JSX.Element {
         <div style={loadingStyle}>Loading…</div>
       )}
 
-      {query.error !== null && (
+      {query.error && (
         <div role="alert" style={errorStyle}>
-          Failed to load cost data. {query.error?.message ?? ''}
+          Failed to load cost data. {query.error.message}
         </div>
       )}
 
@@ -188,7 +188,7 @@ function ChartCard({ data }: { data: DailyCostRow[] }) {
         <polyline
           points={points}
           fill="none"
-          stroke="var(--tw-color-brand-primary)"
+          stroke="var(--tw-color-brand-primary, #14B8A6)"
           strokeWidth={2}
         />
 
@@ -313,7 +313,7 @@ const windowSelectorStyle: React.CSSProperties = {
 
 const windowBtnStyle: React.CSSProperties = {
   padding: '4px 12px',
-  border: '1px solid var(--tw-color-brand-header)',
+  border: '1px solid var(--tw-color-brand-header, #149A9A)',
   borderRadius: 4,
   fontSize: '0.8125rem',
   fontWeight: 500,
@@ -395,9 +395,9 @@ const loadingStyle: React.CSSProperties = {
 
 const errorStyle: React.CSSProperties = {
   padding: 12,
-  background: 'var(--tw-color-status-error-bg)',
-  border: '1px solid var(--tw-color-red-100, var(--tw-color-status-error-bg))',
+  background: 'var(--tw-color-status-error-bg, #FEF2F2)',
+  border: '1px solid var(--tw-color-status-error-fg, #FCA5A5)',
   borderRadius: 6,
-  color: 'var(--tw-color-status-error-fg)',
+  color: 'var(--tw-color-status-error-fg, #B91C1C)',
   fontSize: '0.8125rem',
 };

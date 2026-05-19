@@ -1,22 +1,15 @@
 /**
- * Denial Tool — 50-row fixture for MSW (PR-4 rewrite).
+ * Denial Tool — 50-row fixture for MSW (PR-5).
  *
- * Coverage:
- *   - Worklist row shape: { claim: ClaimSummary, classification: Classification }
- *   - All 6 PriorityChip values represented
- *   - All 3 confidences
- *   - All 4 ClassificationState values (default filter is `state=recommended`)
- *   - All 5 OverrideReason flows reachable (rows that map to each reason)
- *   - All 6 aging_bucket values
- *   - current_status_label variety: Denied (majority) + Filed + Clari Opened +
- *     Clari Closed + Pat Balance + Closed (the D-13 worked-outside-tool path)
- *   - One Stage-2 DATA_ERROR row (99. Uncategorized fallback)
- *   - One re-denial scenario: two classification rows sharing claim_id
+ * PR-5 change over PR-4: every workflow step now carries
+ * `completed_at: null, completed_by: null` (Phase 1.5 fields). Default-null
+ * is backward compatible — older code that doesn't know these fields will
+ * still parse cleanly.
  *
- * Identifiers:
- *   - classification_id: deterministic UUID derived from a numeric seed so
- *     tests can reference rows by index. Format: 1xxxxxxx-... pattern.
- *   - claim_id: integer 6-digit range (314000+) matching backend conventions.
+ * Patched from PR-4's recommendations.ts via in-place sed; preserves the
+ * 50-row dataset (wrong-payer + duplicate + D-13 worked-outside-tool +
+ * stage-2 LLM + re-denial scenarios, plus accepted/overridden/completed
+ * batches).
  */
 
 import type {
@@ -57,6 +50,8 @@ const WORKFLOW_WRONG_PAYER: WorkflowStep[] = [
     sla_days: 3,
     mode: 'Manual',
     day: 'Day 0-3',
+    completed_at: null,
+    completed_by: null,
   },
   {
     step: 2,
@@ -66,6 +61,8 @@ const WORKFLOW_WRONG_PAYER: WorkflowStep[] = [
     sla_days: 1,
     mode: 'Manual',
     day: 'Day 0-3',
+    completed_at: null,
+    completed_by: null,
   },
   {
     step: 3,
@@ -75,6 +72,8 @@ const WORKFLOW_WRONG_PAYER: WorkflowStep[] = [
     sla_days: 1,
     mode: 'Manual',
     day: 'Day 0-3',
+    completed_at: null,
+    completed_by: null,
   },
   {
     step: 4,
@@ -84,6 +83,8 @@ const WORKFLOW_WRONG_PAYER: WorkflowStep[] = [
     sla_days: 21,
     mode: 'Manual',
     day: 'Day 4-21',
+    completed_at: null,
+    completed_by: null,
   },
   {
     step: 5,
@@ -93,6 +94,8 @@ const WORKFLOW_WRONG_PAYER: WorkflowStep[] = [
     sla_days: 30,
     mode: 'Manual',
     day: 'Day 21+',
+    completed_at: null,
+    completed_by: null,
   },
   {
     step: 6,
@@ -101,6 +104,8 @@ const WORKFLOW_WRONG_PAYER: WorkflowStep[] = [
     sla_days: 60,
     mode: 'Manual',
     day: 'Day 30+',
+    completed_at: null,
+    completed_by: null,
   },
 ];
 
@@ -113,6 +118,8 @@ const WORKFLOW_DUPLICATE: WorkflowStep[] = [
     sla_days: 2,
     mode: 'Manual',
     day: 'Day 0-3',
+    completed_at: null,
+    completed_by: null,
   },
   {
     step: 2,
@@ -121,6 +128,8 @@ const WORKFLOW_DUPLICATE: WorkflowStep[] = [
     sla_days: 2,
     mode: 'Manual',
     day: 'Day 0-3',
+    completed_at: null,
+    completed_by: null,
   },
   {
     step: 3,
@@ -130,6 +139,8 @@ const WORKFLOW_DUPLICATE: WorkflowStep[] = [
     sla_days: 1,
     mode: 'Manual',
     day: 'Day 0-3',
+    completed_at: null,
+    completed_by: null,
   },
 ];
 
@@ -903,7 +914,61 @@ function buildBatch(
   return out;
 }
 
-export const WORKLIST_ROWS: WorklistRow[] = SPECS.map(buildRow);
+/**
+ * PR-5 post-processor: inject `completed_at` + `completed_by` on workflow
+ * steps for non-recommended rows so the per-step completion UI has
+ * something to show out of the gate in dev.
+ *
+ * Sequencing strategy:
+ *   - state=recommended  → no steps completed (analyst hasn't started)
+ *   - state=accepted     → ~30% of steps completed (mid-flight)
+ *   - state=overridden   → ~60% of steps completed
+ *   - state=completed    → all steps completed
+ *
+ * Completion timestamps are deterministic, anchored to ANCHOR_MS.
+ */
+function withStepCompletions(row: WorklistRow, idx: number): WorklistRow {
+  const state = row.classification.state;
+  if (state === 'recommended') return row;
+  const steps = row.classification.workflow_steps;
+  if (steps.length === 0) return row;
+
+  let pct: number;
+  if (state === 'accepted') pct = 0.3;
+  else if (state === 'overridden') pct = 0.6;
+  else pct = 1.0; // completed
+
+  const completeCount = Math.max(
+    1,
+    Math.min(steps.length, Math.round(steps.length * pct)),
+  );
+  const baseAt = new Date(
+    ANCHOR_MS - (24 + idx) * 3600_000,
+  ).toISOString();
+  const completedBy = 'mock-analyst-sub-renita-k';
+
+  return {
+    ...row,
+    classification: {
+      ...row.classification,
+      workflow_steps: steps.map((s, i) =>
+        i < completeCount
+          ? {
+              ...s,
+              completed_at: new Date(
+                Date.parse(baseAt) + i * 15 * 60_000,
+              ).toISOString(),
+              completed_by: completedBy,
+            }
+          : s,
+      ),
+    },
+  };
+}
+
+export const WORKLIST_ROWS: WorklistRow[] = SPECS.map(buildRow).map(
+  withStepCompletions,
+);
 
 /**
  * Static reference data the FE can consume for filter option lists

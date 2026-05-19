@@ -47,14 +47,20 @@ function moneyGte(decimalString: string, threshold: number): boolean {
 function formatDateShort(iso: string): string {
   const parts = iso.split('-');
   if (parts.length < 3) return iso;
-  const [y, m, d] = parts;
-  return `${m}/${d}/${y!.slice(2)}`;
+  const y = parts[0];
+  const m = parts[1];
+  const d = parts[2];
+  if (y === undefined || m === undefined || d === undefined) return iso;
+  return `${m}/${d}/${y.slice(2)}`;
 }
 
 function formatMonthDay(iso: string): string {
   const parts = iso.split('-');
   if (parts.length < 3) return iso;
-  return `${parts[1]}/${parts[2]}`;
+  const m = parts[1];
+  const d = parts[2];
+  if (m === undefined || d === undefined) return iso;
+  return `${m}/${d}`;
 }
 
 function daysUntil(iso: string): number {
@@ -85,7 +91,7 @@ export function ClaimIdCell({ row }: { row: WorklistRow }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <span
         style={{
-          color: 'var(--tw-color-brand-header)',
+          color: 'var(--tw-color-brand-header, #149A9A)',
           fontVariantNumeric: 'tabular-nums',
           fontWeight: 500,
         }}
@@ -173,14 +179,22 @@ export function RecommendationCell({ row }: { row: WorklistRow }) {
 }
 
 /**
- * Next action cell — first workflow step's `action`, owner+SLA sub-line.
- * Workflow steps may be empty for categories without a published workflow;
- * in that case render the placeholder.
+ * Next action cell — derives from the first incomplete workflow step
+ * (Phase 1.5). Steps gain `completed_at` after the analyst checks them
+ * off via /steps/{n}/complete; we advance the "next" indicator as the
+ * workflow progresses rather than always showing step 1.
+ *
+ * Empty workflow → placeholder. All steps completed → "All steps complete"
+ * (this state should normally only be visible briefly before the
+ * classification auto-transitions to `completed` and falls out of the
+ * default filter, but render gracefully if we catch it mid-transition).
  */
 export function NextActionCell({ row }: { row: WorklistRow }) {
-  const first = row.classification.workflow_steps[0];
+  const steps = row.classification.workflow_steps;
+  const firstIncomplete = steps.find((s) => !s.completed_at);
+  const allComplete = steps.length > 0 && !firstIncomplete;
 
-  if (!first) {
+  if (steps.length === 0) {
     return (
       <span
         style={{
@@ -194,13 +208,30 @@ export function NextActionCell({ row }: { row: WorklistRow }) {
     );
   }
 
+  if (allComplete) {
+    return (
+      <span
+        style={{
+          color: 'var(--tw-color-brand-header, #149A9A)',
+          fontSize: '0.8125rem',
+          fontWeight: 500,
+        }}
+      >
+        ✓ All steps complete
+      </span>
+    );
+  }
+
+  if (!firstIncomplete) return null;
+  const first = firstIncomplete;
+
   const slaDate = row.classification.sla_next_action_date;
   const slaDelta = daysUntil(slaDate);
   const slaColor =
     slaDelta < 0
-      ? 'var(--tw-color-status-error-fg)'
+      ? 'var(--tw-color-status-error-fg, #EF4444)'
       : slaDelta <= 3
-        ? 'var(--tw-color-status-warning-fg)'
+        ? 'var(--tw-color-status-warning-fg, #D97706)'
         : 'var(--tw-color-text-muted)';
 
   return (

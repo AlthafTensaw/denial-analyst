@@ -1,50 +1,70 @@
 /**
- * PrivacyField — PHI masking + reveal-on-click.
+ * PrivacyField — PHI masking + reveal-on-click + audit dispatch.
  *
- * DEFENSIVE SCAFFOLDING in PR-4: the backend does not surface PHI fields
- * in any denial-tool endpoint in Phase 1, so this component is not
- * currently wired into any view. It's kept for two reasons:
+ * PR-5 wire-up: the reveal-phi endpoint exists now (Phase 1.5), so this
+ * component dispatches an audit event on the first reveal. Behavior:
  *
- *   1. Phase 1.1 is expected to ship denial events with reason_text +
- *      patient identifiers. When that lands, this component is ready
- *      to wrap those fields without re-deriving the design.
+ *   1. Initial render: masked (`••••••••••••••••` + eye icon).
+ *   2. First click: reveal locally AND fire `denial.reveal-phi`.
+ *      The reveal is INSTANT — we don't block on the audit call.
+ *      If the audit fails, we log it but don't unhide. HIPAA cares
+ *      about the audit being LOGGED, not whether the UX waited for it.
+ *   3. Subsequent renders: stays revealed (component-local state).
  *
- *   2. The companion `no-raw-phi` ESLint rule (in eslint-plugins/) is
- *      already enforced. Keeping the component as a documented escape
- *      hatch means contributors have an obvious place to migrate the
- *      moment PHI shows up.
+ * field_path conventions (used by the backend's audit reports to group):
+ *   - "claim.patient_name"
+ *   - "claim.mrn"
+ *   - "denial_event:{event_id}.reason_text"
  *
- * Behavior (when wired):
- *   - Default: render `••••••••••••••••` with an eye icon
- *   - On click: reveals the value. NOTE in PR-4 there is no backend
- *     reveal-phi endpoint, so the local reveal is a UI-only affordance.
- *     Phase 1.1 should add a `POST /v1/classifications/{id}/reveal-phi`
- *     endpoint (or equivalent) that records the audit event server-side;
- *     this component then dispatches via useActionMutation.
+ * Free-text on the backend by design. Use the suggested conventions
+ * unless there's a good reason not to.
  */
 
 import { useState } from 'react';
+import { useActionMutation } from '@tensaw/actions';
+import type { RevealPhiPurpose } from '../actions/schemas';
 
 interface PrivacyFieldProps {
   value: string;
-  /** Identifier for the audit event (Phase 1.1 wire-up). */
-  fieldPath?: string;
-  /** Override the masked-state placeholder. */
+  /** Required for audit dispatch — the classification context for this reveal. */
+  classificationId: string;
+  /** Audit identifier for this field, e.g. "claim.patient_name". */
+  fieldPath: string;
+  /** Audit purpose. Defaults to 'worklist_review'. */
+  purpose?: RevealPhiPurpose;
+  /** Override the masked placeholder. */
   maskedAs?: string;
 }
 
 export function PrivacyField({
   value,
-  fieldPath: _fieldPath,
+  classificationId,
+  fieldPath,
+  purpose = 'worklist_review',
   maskedAs = '••••••••••••••••',
 }: PrivacyFieldProps): JSX.Element {
   const [revealed, setRevealed] = useState(false);
+  const [mutateReveal] = useActionMutation('denial.reveal-phi');
 
   const handleReveal = () => {
     setRevealed(true);
-    // Phase 1.1 hook point: when an audit endpoint exists, dispatch the
-    // reveal event here. PR-4 intentionally has no dispatch since the
-    // endpoint doesn't exist.
+    // Fire-and-forget. Don't await; don't unhide on failure.
+    mutateReveal({
+      classification_id: classificationId,
+      field_path: fieldPath,
+      purpose,
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(res.error.message);
+      })
+      .catch((err: unknown) => {
+        // Log only — don't block the analyst's view.
+         
+        console.warn(
+          '[PrivacyField] reveal-phi audit failed (reveal still shown to user):',
+          err,
+        );
+      });
   };
 
   if (revealed) {

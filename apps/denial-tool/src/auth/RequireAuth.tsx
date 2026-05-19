@@ -42,7 +42,7 @@ export function RequirePermission({
     const next = encodeURIComponent(location.pathname + location.search);
     return <Navigate to={`/sign-in?next=${next}`} replace />;
   }
-  if (!user.permissions?.includes(permission)) {
+  if (!user.permissions.includes(permission)) {
     return (
       <div style={forbiddenStyle}>
         <h2 style={forbiddenTitleStyle}>Insufficient access</h2>

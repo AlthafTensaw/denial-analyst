@@ -24,35 +24,35 @@ interface ChipStyle {
 const CHIP_STYLES: Record<PriorityChipKind, ChipStyle> = {
   TF_WATCH: {
     label: 'TF watch',
-    bg: 'var(--tw-color-status-error-bg)',
-    fg: 'var(--tw-color-status-error-fg)',
+    bg: 'var(--tw-color-status-error-bg, #FEF2F2)',
+    fg: 'var(--tw-color-status-error-fg, #B91C1C)',
   },
   HIGH_DOLLAR: {
     label: 'High $',
-    bg: 'var(--tw-color-status-warning-bg)',
-    fg: 'var(--tw-color-status-warning-fg)',
+    bg: 'var(--tw-color-status-warning-bg, #FFFBEB)',
+    fg: 'var(--tw-color-status-warning-fg, #D97706)',
   },
   LOW_CONFIDENCE: {
     label: 'Low conf',
     bg: 'transparent',
-    fg: 'var(--tw-color-status-error-fg)',
+    fg: 'var(--tw-color-status-error-fg, #B91C1C)',
     outline: true,
     iconBefore: '⚠',
   },
   DUP_INVESTIGATE: {
     label: 'Dup — investigate',
-    bg: 'var(--tw-color-table-header-bg)',
-    fg: 'var(--tw-color-brand-primary-hover)',
+    bg: 'var(--tw-color-table-header-bg, #EBF7F6)',
+    fg: 'var(--tw-color-brand-header, #149A9A)',
   },
   OVERRIDE_PATTERN: {
     label: 'Override pattern',
-    bg: 'var(--tw-color-input-disabled-bg)',
-    fg: 'var(--tw-color-surface-overlay)',
+    bg: 'var(--tw-color-border-muted, #E5E7EB)',
+    fg: 'var(--tw-color-text-secondary, #4B5563)',
   },
   DATA_ERROR: {
     label: 'Data error',
-    bg: 'var(--tw-color-status-error-bg)',
-    fg: 'var(--tw-color-status-error-fg)',
+    bg: 'var(--tw-color-status-error-bg, #FEF2F2)',
+    fg: 'var(--tw-color-status-error-fg, #B91C1C)',
   },
 };
 

@@ -20,7 +20,8 @@
     "./rcm": "./src/rcm/index.ts",
     "./utils": "./src/utils/index.ts",
     "./types/props": "./src/types/props.ts",
-    "./styles/global.css": "./src/styles/global.css"
+    "./styles/global.css": "./src/styles/global.css",
+    "./tailwind.config.js": "./tailwind.config.js"
   },
   "scripts": {
     "build": "tsc -b",

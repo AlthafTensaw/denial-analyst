@@ -10,7 +10,7 @@
  * Permission gating done by RequireAuth / RequirePermission outlets.
  */
 
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppLayout } from './AppLayout';
 import { RequireAuth, RequirePermission } from './auth/RequireAuth';
 import { SignInPage } from './pages/sign-in/SignInPage';
@@ -39,4 +39,15 @@ export function AppRoutes(): JSX.Element {
       <Route path="*" element={<Navigate to="/worklist" replace />} />
     </Routes>
   );
+}
+
+const router = createBrowserRouter([
+  {
+    path: '*',
+    element: <AppRoutes />,
+  },
+]);
+
+export function AppRouter(): JSX.Element {
+  return <RouterProvider router={router} />;
 }

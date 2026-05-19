@@ -197,5 +197,5 @@ export const config: PlatformConfig = loadConfig(
         VITE_GOOGLE_MAPS_API_KEY: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
         VITE_ENABLE_MSW: import.meta.env.VITE_ENABLE_MSW,
       }
-    : (process.env as Record<string, unknown>),
+    : process.env,
 );

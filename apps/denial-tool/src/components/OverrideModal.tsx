@@ -89,7 +89,7 @@ export function OverrideModal({
     >
       <div
         style={modalStyle}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => { e.stopPropagation(); }}
       >
         <h2 id={titleId} style={titleStyle}>
           Override recommendation
@@ -110,7 +110,7 @@ export function OverrideModal({
                   name="override-reason"
                   value={r}
                   checked={reason === r}
-                  onChange={() => setReason(r)}
+                  onChange={() => { setReason(r); }}
                 />
                 <span>
                   <strong style={reasonLabelStyle}>{meta.label}</strong>
@@ -126,7 +126,7 @@ export function OverrideModal({
             Corrected category <span style={requiredStyle}>*</span>
             <select
               value={correctedCategory}
-              onChange={(e) => setCorrectedCategory(e.target.value)}
+              onChange={(e) => { setCorrectedCategory(e.target.value); }}
               style={selectStyle}
             >
               <option value="">Select the correct category…</option>
@@ -151,7 +151,7 @@ export function OverrideModal({
           <input
             type="text"
             value={correctedBranch}
-            onChange={(e) => setCorrectedBranch(e.target.value)}
+            onChange={(e) => { setCorrectedBranch(e.target.value); }}
             placeholder={
               currentBranch
                 ? `e.g., alternate to '${currentBranch}'`
@@ -165,7 +165,7 @@ export function OverrideModal({
           Notes <span style={optionalStyle}>(optional)</span>
           <textarea
             value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            onChange={(e) => { setNotes(e.target.value); }}
             rows={3}
             maxLength={1000}
             placeholder="What did you do instead, or what did the tool miss?"
@@ -275,7 +275,7 @@ const fieldLabelStyle: React.CSSProperties = {
 };
 
 const requiredStyle: React.CSSProperties = {
-  color: 'var(--tw-color-status-error-fg)',
+  color: 'var(--tw-color-status-error-fg, #EF4444)',
 };
 
 const optionalStyle: React.CSSProperties = {
@@ -286,7 +286,7 @@ const optionalStyle: React.CSSProperties = {
 
 const errorHintStyle: React.CSSProperties = {
   fontSize: '0.75rem',
-  color: 'var(--tw-color-status-error-fg)',
+  color: 'var(--tw-color-status-error-fg, #EF4444)',
 };
 
 const selectStyle: React.CSSProperties = {
@@ -341,7 +341,7 @@ const cancelBtnStyle: React.CSSProperties = {
 
 const submitBtnStyle: React.CSSProperties = {
   padding: '8px 16px',
-  background: 'var(--tw-color-brand-primary)',
+  background: 'var(--tw-color-brand-primary, #14B8A6)',
   color: 'white',
   border: 'none',
   borderRadius: 6,

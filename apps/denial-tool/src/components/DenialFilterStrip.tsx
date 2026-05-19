@@ -61,56 +61,56 @@ export function DenialFilterStrip({
         value={filters.state}
         options={STATE_OPTIONS}
         onChange={(v) =>
-          setFilter('state', v as WorklistFilters['state'])
+          { setFilter('state', v as WorklistFilters['state']); }
         }
       />
       <FilterDropdown
         label="Category"
         value={filters.primary_category}
         options={CATEGORY_VALUES}
-        onChange={(v) => setFilter('primary_category', v)}
+        onChange={(v) => { setFilter('primary_category', v); }}
       />
       <FilterDropdown
         label="Priority"
         value={filters.priority_chip}
         options={PRIORITY_OPTIONS}
         onChange={(v) =>
-          setFilter('priority_chip', v as WorklistFilters['priority_chip'])
+          { setFilter('priority_chip', v as WorklistFilters['priority_chip']); }
         }
       />
       <FilterDropdown
         label="Payer"
         value={filters.payer_name}
         options={WORKLIST_FIXTURE_META.payers}
-        onChange={(v) => setFilter('payer_name', v)}
+        onChange={(v) => { setFilter('payer_name', v); }}
       />
       <FilterDropdown
         label="Owner"
         value={filters.recommended_owner}
         options={WORKLIST_FIXTURE_META.recommended_owners}
-        onChange={(v) => setFilter('recommended_owner', v)}
+        onChange={(v) => { setFilter('recommended_owner', v); }}
       />
       <FilterDropdown
         label="Aging"
         value={filters.age_bucket}
         options={AGE_BUCKET_OPTIONS}
-        onChange={(v) => setFilter('age_bucket', v)}
+        onChange={(v) => { setFilter('age_bucket', v); }}
       />
       <FilterDropdown
         label="Source"
         value={filters.classification_source}
         options={SOURCE_OPTIONS}
         onChange={(v) =>
-          setFilter(
+          { setFilter(
             'classification_source',
             v as WorklistFilters['classification_source'],
-          )
+          ); }
         }
       />
       <BooleanToggle
         label="Needs review"
         value={filters.requires_human_review}
-        onChange={(v) => setFilter('requires_human_review', v)}
+        onChange={(v) => { setFilter('requires_human_review', v); }}
       />
 
       {activeCount > 0 && (
@@ -152,17 +152,17 @@ function FilterDropdown({
     <span style={{ position: 'relative' }}>
       <button
         type="button"
-        onClick={() => setOpen((s) => !s)}
+        onClick={() => { setOpen((s) => !s); }}
         style={{
           ...chipBaseStyle,
           background: active
-            ? 'var(--tw-color-table-header-bg)'
-            : 'var(--tw-color-surface-muted)',
+            ? 'var(--tw-color-table-header-bg, #EBF7F6)'
+            : 'var(--tw-color-surface-muted, #F9FAFB)',
           color: active
-            ? 'var(--tw-color-brand-primary-hover)'
+            ? 'var(--tw-color-brand-header, #149A9A)'
             : 'var(--tw-color-text-secondary)',
           borderColor: active
-            ? 'var(--tw-color-teal-200)'
+            ? 'var(--tw-color-border-focus, #A7DEDA)'
             : 'var(--tw-color-border-default)',
         }}
       >
@@ -174,7 +174,7 @@ function FilterDropdown({
         <div style={dropdownStyle}>
           <div
             style={dropdownItemStyle}
-            onClick={() => handleSelect(undefined)}
+            onClick={() => { handleSelect(undefined); }}
           >
             Any
           </div>
@@ -185,10 +185,10 @@ function FilterDropdown({
                 ...dropdownItemStyle,
                 background:
                   opt === value
-                    ? 'var(--tw-color-table-header-bg)'
+                    ? 'var(--tw-color-table-header-bg, #EBF7F6)'
                     : undefined,
               }}
-              onClick={() => handleSelect(opt)}
+              onClick={() => { handleSelect(opt); }}
             >
               {opt}
             </div>
@@ -213,20 +213,20 @@ function BooleanToggle({
   return (
     <button
       type="button"
-      onClick={() => onChange(value === true ? undefined : true)}
+      onClick={() => { onChange(value === true ? undefined : true); }}
       style={{
         ...chipBaseStyle,
         background:
           value === true
-            ? 'var(--tw-color-table-header-bg)'
-            : 'var(--tw-color-surface-muted)',
+            ? 'var(--tw-color-table-header-bg, #EBF7F6)'
+            : 'var(--tw-color-surface-muted, #F9FAFB)',
         color:
           value === true
-            ? 'var(--tw-color-brand-primary-hover)'
+            ? 'var(--tw-color-brand-header, #149A9A)'
             : 'var(--tw-color-text-secondary)',
         borderColor:
           value === true
-            ? 'var(--tw-color-teal-200)'
+            ? 'var(--tw-color-border-focus, #A7DEDA)'
             : 'var(--tw-color-border-default)',
       }}
     >
@@ -261,7 +261,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 const countPillStyle: React.CSSProperties = {
-  background: 'var(--tw-color-brand-primary)',
+  background: 'var(--tw-color-brand-primary, #14B8A6)',
   color: 'white',
   fontSize: '0.6875rem',
   padding: '1px 7px',

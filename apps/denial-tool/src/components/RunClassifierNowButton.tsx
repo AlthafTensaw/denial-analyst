@@ -15,8 +15,8 @@
  */
 
 import { useState } from 'react';
-import { useAuthStore } from '@tensaw/runtime';
 import { useActionMutation } from '@tensaw/actions';
+import { useAuthStore } from '@tensaw/runtime';
 import { friendlyErrorMessage } from '../lib/problem';
 
 interface RunClassifierNowButtonProps {
@@ -31,15 +31,15 @@ export function RunClassifierNowButton({
 }: RunClassifierNowButtonProps): JSX.Element | null {
   const user = useAuthStore((s) => s.user);
   const [toast, setToast] = useState<string | null>(null);
-  const [fireReclassify, reclassify] = useActionMutation('denial.classify-claim');
+  const [mutateReclassify, { isLoading: reclassifyPending }] = useActionMutation('denial.classify-claim');
 
   // D-18: hide from analysts entirely.
-  if (!user?.permissions?.includes('denial.classify_claim')) return null;
+  if (!user?.permissions.includes('denial.classify_claim')) return null;
 
   const handleClick = async () => {
     try {
-      const result = await fireReclassify({ claim_id: claimId });
-      if (!result.ok) throw result.error;
+      const result = await mutateReclassify({ claim_id: claimId });
+      if (!result.ok) throw new Error(result.error.message);
       setToast(`Re-classified claim ${claimId}.`);
       onSuccess?.();
     } catch (err) {
@@ -52,18 +52,18 @@ export function RunClassifierNowButton({
       <button
         type="button"
         onClick={() => void handleClick()}
-        disabled={reclassify.isLoading}
+        disabled={reclassifyPending}
         style={btnStyle}
         title="Run classifier against this claim (re-classify against current denial events)"
       >
-        {reclassify.isLoading ? 'Re-classifying…' : 'Re-classify'}
+        {reclassifyPending ? 'Re-classifying…' : 'Re-classify'}
       </button>
       {toast && (
         <div role="status" style={toastStyle}>
           {toast}
           <button
             type="button"
-            onClick={() => setToast(null)}
+            onClick={() => { setToast(null); }}
             style={toastCloseStyle}
             aria-label="Dismiss"
           >
@@ -78,8 +78,8 @@ export function RunClassifierNowButton({
 const btnStyle: React.CSSProperties = {
   padding: '4px 12px',
   background: 'transparent',
-  color: 'var(--tw-color-brand-header)',
-  border: '1px solid var(--tw-color-brand-header)',
+  color: 'var(--tw-color-brand-header, #149A9A)',
+  border: '1px solid var(--tw-color-brand-header, #149A9A)',
   borderRadius: 4,
   fontSize: '0.8125rem',
   fontWeight: 500,
@@ -90,7 +90,7 @@ const toastStyle: React.CSSProperties = {
   position: 'absolute',
   top: 'calc(100% + 4px)',
   right: 0,
-  background: 'var(--tw-color-surface-overlay)',
+  background: '#1F2937',
   color: 'white',
   padding: '6px 32px 6px 10px',
   borderRadius: 4,

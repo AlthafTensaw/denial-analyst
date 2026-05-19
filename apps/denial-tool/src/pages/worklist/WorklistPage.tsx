@@ -163,7 +163,7 @@ export function WorklistPage(): JSX.Element {
             <button
               type="button"
               disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              onClick={() => { setPage((p) => Math.max(1, p - 1)); }}
               style={pageBtnStyle}
             >
               Prev
@@ -171,7 +171,7 @@ export function WorklistPage(): JSX.Element {
             <button
               type="button"
               disabled={!query.data?.has_more}
-              onClick={() => setPage((p) => p + 1)}
+              onClick={() => { setPage((p) => p + 1); }}
               style={pageBtnStyle}
             >
               Next
@@ -180,9 +180,9 @@ export function WorklistPage(): JSX.Element {
         </div>
       )}
 
-      {query.error !== null && (
+      {query.error && (
         <div role="alert" style={errorBannerStyle}>
-          Failed to load worklist. {query.error?.message ?? ''}
+          Failed to load worklist. {query.error.message}
         </div>
       )}
     </div>
@@ -223,9 +223,9 @@ const subtitleStyle: React.CSSProperties = {
 
 const selectionPillStyle: React.CSSProperties = {
   fontSize: '0.8125rem',
-  color: 'var(--tw-color-brand-header)',
+  color: 'var(--tw-color-brand-header, #149A9A)',
   padding: '4px 12px',
-  background: 'var(--tw-color-table-header-bg)',
+  background: 'var(--tw-color-table-header-bg, #EBF7F6)',
   borderRadius: 6,
   fontWeight: 500,
 };
@@ -239,7 +239,7 @@ const emptyStateStyle: React.CSSProperties = {
 const clearBtnStyle: React.CSSProperties = {
   marginTop: 12,
   padding: '6px 16px',
-  background: 'var(--tw-color-brand-primary)',
+  background: 'var(--tw-color-brand-primary, #14B8A6)',
   color: 'white',
   border: 'none',
   borderRadius: 6,
@@ -275,9 +275,9 @@ const pageBtnStyle: React.CSSProperties = {
 
 const errorBannerStyle: React.CSSProperties = {
   padding: 12,
-  background: 'var(--tw-color-status-error-bg)',
-  border: '1px solid var(--tw-color-red-100, var(--tw-color-status-error-bg))',
+  background: 'var(--tw-color-status-error-bg, #FEF2F2)',
+  border: '1px solid var(--tw-color-status-error-fg, #FCA5A5)',
   borderRadius: 6,
-  color: 'var(--tw-color-status-error-fg)',
+  color: 'var(--tw-color-status-error-fg, #B91C1C)',
   fontSize: '0.8125rem',
 };

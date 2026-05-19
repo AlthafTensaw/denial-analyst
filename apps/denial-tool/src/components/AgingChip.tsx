@@ -17,34 +17,34 @@ interface BucketStyle {
 
 const STYLES: Record<string, BucketStyle> = {
   '0-29 day': {
-    bg: 'var(--tw-color-input-disabled-bg)',
-    fg: 'var(--tw-color-text-primary)',
+    bg: 'var(--tw-color-surface-muted, #F9FAFB)',
+    fg: 'var(--tw-color-text-secondary, #4B5563)',
   },
   '30-59 day': {
-    bg: 'var(--tw-color-blue-50)',
-    fg: 'var(--tw-color-blue-700)',
+    bg: 'var(--tw-color-status-info-bg, #EFF6FF)',
+    fg: 'var(--tw-color-status-info-fg, #2563EB)',
   },
   '60-89 day': {
-    bg: 'var(--tw-color-status-warning-bg)',
-    fg: 'var(--tw-color-status-warning-fg)',
+    bg: 'var(--tw-color-status-warning-bg, #FFFBEB)',
+    fg: 'var(--tw-color-status-warning-fg, #D97706)',
   },
   '90-119 day': {
-    bg: 'var(--tw-color-amber-100, var(--tw-color-status-warning-bg))',
-    fg: 'var(--tw-color-status-warning-fg)',
+    bg: 'var(--tw-color-status-warning-bg, #FFFBEB)',
+    fg: 'var(--tw-color-status-warning-fg, #D97706)',
   },
   '120-179 day': {
-    bg: 'var(--tw-color-status-error-bg)',
-    fg: 'var(--tw-color-status-error-fg)',
+    bg: 'var(--tw-color-status-error-bg, #FEF2F2)',
+    fg: 'var(--tw-color-status-error-fg, #EF4444)',
   },
   '180+ day': {
-    bg: 'var(--tw-color-red-100, var(--tw-color-status-error-bg))',
-    fg: 'var(--tw-color-status-error-fg)',
+    bg: 'var(--tw-color-status-error-bg, #FEF2F2)',
+    fg: 'var(--tw-color-status-error-fg, #EF4444)',
   },
 };
 
 const FALLBACK: BucketStyle = {
-  bg: 'var(--tw-color-surface-muted)',
-  fg: 'var(--tw-color-text-primary)',
+  bg: 'var(--tw-color-surface-muted, #F9FAFB)',
+  fg: 'var(--tw-color-text-secondary, #4B5563)',
 };
 
 export function AgingChip({ bucket }: AgingChipProps): JSX.Element {

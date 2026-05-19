@@ -14,7 +14,7 @@ import { useAuthStore } from '@tensaw/runtime';
 export function AppLayout(): JSX.Element {
   const user = useAuthStore((s) => s.user);
   const signOut = useAuthStore((s) => s.signOut);
-  const canViewCost = user?.permissions?.includes('denial.view_cost') ?? false;
+  const canViewCost = user?.permissions.includes('denial.view_cost') ?? false;
 
   return (
     <div style={shellStyle}>
@@ -24,15 +24,15 @@ export function AppLayout(): JSX.Element {
 
         <nav style={navStyle}>
           <NavLink to="/worklist" style={navLinkStyle}>
-            {({ isActive }: { isActive: boolean }) => (
+            {({ isActive }) => (
               <span
                 style={{
                   ...navLinkInnerStyle,
                   color: isActive
-                    ? 'var(--tw-color-brand-header)'
+                    ? 'var(--tw-color-brand-header, #149A9A)'
                     : 'var(--tw-color-text-secondary)',
                   borderBottomColor: isActive
-                    ? 'var(--tw-color-brand-primary)'
+                    ? 'var(--tw-color-brand-primary, #14B8A6)'
                     : 'transparent',
                 }}
               >
@@ -42,15 +42,15 @@ export function AppLayout(): JSX.Element {
           </NavLink>
           {canViewCost && (
             <NavLink to="/cost" style={navLinkStyle}>
-              {({ isActive }: { isActive: boolean }) => (
+              {({ isActive }) => (
                 <span
                   style={{
                     ...navLinkInnerStyle,
                     color: isActive
-                      ? 'var(--tw-color-brand-header)'
+                      ? 'var(--tw-color-brand-header, #149A9A)'
                       : 'var(--tw-color-text-secondary)',
                     borderBottomColor: isActive
-                      ? 'var(--tw-color-brand-primary)'
+                      ? 'var(--tw-color-brand-primary, #14B8A6)'
                       : 'transparent',
                   }}
                 >
@@ -65,7 +65,7 @@ export function AppLayout(): JSX.Element {
           {user && (
             <>
               <span>{user.email}</span>
-              <span style={roleStyle}>{user.roles?.join('/')}</span>
+              <span style={roleStyle}>{user.roles.join('/')}</span>
               <button type="button" onClick={signOut} style={signOutBtnStyle}>
                 Sign out
               </button>
@@ -82,7 +82,7 @@ export function AppLayout(): JSX.Element {
 
 const shellStyle: React.CSSProperties = {
   minHeight: '100vh',
-  background: 'var(--tw-color-surface-bg)',
+  background: 'var(--tw-color-surface-muted, #FAFAFB)',
 };
 
 const headerStyle: React.CSSProperties = {
@@ -97,7 +97,7 @@ const headerStyle: React.CSSProperties = {
 
 const brandStyle: React.CSSProperties = {
   fontWeight: 500,
-  color: 'var(--tw-color-brand-header)',
+  color: 'var(--tw-color-brand-header, #149A9A)',
 };
 
 const crumbsStyle: React.CSSProperties = {
@@ -136,17 +136,17 @@ const userBadgeStyle: React.CSSProperties = {
 
 const roleStyle: React.CSSProperties = {
   padding: '2px 8px',
-  background: 'var(--tw-color-input-disabled-bg)',
+  background: 'var(--tw-color-border-muted, #E5E7EB)',
   borderRadius: 4,
   fontSize: '0.6875rem',
   fontWeight: 500,
-  color: 'var(--tw-color-text-primary)',
+  color: 'var(--tw-color-text-secondary, #4B5563)',
 };
 
 const signOutBtnStyle: React.CSSProperties = {
   background: 'transparent',
   border: 'none',
-  color: 'var(--tw-color-brand-header)',
+  color: 'var(--tw-color-brand-header, #149A9A)',
   cursor: 'pointer',
   fontSize: '0.8125rem',
   textDecoration: 'underline',
