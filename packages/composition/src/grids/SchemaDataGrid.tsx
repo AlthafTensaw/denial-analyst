@@ -257,6 +257,30 @@ export function SchemaDataGrid<TRow>({
         <thead style={theadStyle}>
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
+              {selectionMode !== 'none' ? (
+                <th
+                  style={{
+                    ...thStyle,
+                    padding: cellPad,
+                    width: 36,
+                    minWidth: 36,
+                    textAlign: 'center',
+                  }}
+                >
+                  {selectionMode === 'multi' ? (
+                    <input
+                      type="checkbox"
+                      aria-label="Select all rows"
+                      checked={table.getIsAllRowsSelected()}
+                      ref={(el) => {
+                        if (el) el.indeterminate = table.getIsSomeRowsSelected();
+                      }}
+                      onChange={table.getToggleAllRowsSelectedHandler()}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : null}
+                </th>
+              ) : null}
               {hg.headers.map((header) => {
                 const col = colMeta.get(header.column.id);
                 const sortDir = header.column.getIsSorted();
@@ -301,6 +325,20 @@ export function SchemaDataGrid<TRow>({
                 }}
                 aria-selected={isSelected || undefined}
               >
+                {selectionMode !== 'none' ? (
+                  <td
+                    style={{ ...tdStyle, padding: cellPad, width: 36, minWidth: 36, textAlign: 'center' }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      aria-label={`Select row ${row.id}`}
+                      checked={row.getIsSelected()}
+                      disabled={!row.getCanSelect()}
+                      onChange={row.getToggleSelectedHandler()}
+                    />
+                  </td>
+                ) : null}
                 {row.getVisibleCells().map((cell) => {
                   const col = colMeta.get(cell.column.id);
                   const truncate =

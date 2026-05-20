@@ -37,17 +37,17 @@ export function DenialBulkActionBar({
 
   return (
     <BulkActionBar
-      selectionCount={selectedRows.length}
+      selectedCount={selectedRows.length}
       onClear={onClear}
       label={`${selectedRows.length} selected`}
     >
       {gate.ok ? (
         <ActionButton<
-          { body: { classification_ids: string[] } },
+          { classification_ids: string[] },
           BulkAcceptResponse
         >
           actionId="denial.bulk-accept"
-          request={{ body: { classification_ids: ids } }}
+          request={{ classification_ids: ids }}
           variant="primary"
           toastOnSuccess={(resp) =>
             `Accepted ${resp.accepted.length} of ${resp.requested}`
@@ -61,15 +61,13 @@ export function DenialBulkActionBar({
         </ActionButton>
       ) : (
         <Tooltip
-          content={
-            gate.failedRow
-              ? `Row ${gate.failedRow.claim.claim_id}: ${gate.reason}`
-              : gate.reason
-          }
+          content={gate.reason}
         >
-          <Button variant="primary" disabled>
-            Accept all ({selectedRows.length})
-          </Button>
+          <span>
+            <Button variant="primary" disabled>
+              Accept all ({selectedRows.length})
+            </Button>
+          </span>
         </Tooltip>
       )}
 

@@ -50,7 +50,7 @@ export function DenialFilterStrip({
   const { filters, setFilter, clearAll, activeCount } = filtersApi;
 
   return (
-    <div style={stripStyle}>
+    <div style={stripStyle} >
       <span style={labelStyle}>
         Filters
         {activeCount > 0 && <span style={countPillStyle}>{activeCount}</span>}

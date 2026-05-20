@@ -23,7 +23,7 @@ export function AppLayout() {
 
   const topNav = (
     <div
-      style={{ background: 'var(--tw-color-brand-header)' }}
+      style={{ background: '#fff', borderBottom: '1px solid var(--tw-color-border)' }}
       className="w-full"
     >
       <TopNav
@@ -31,7 +31,7 @@ export function AppLayout() {
         logo={
         <span
           className="flex items-center gap-2 font-semibold text-sm tracking-tight"
-          style={{ color: '#fff' }}
+          style={{ color: 'var(--tw-color-text-primary)' }}
         >
           {/* Medical cross icon */}
           <svg
@@ -41,10 +41,10 @@ export function AppLayout() {
             fill="none"
             aria-hidden="true"
           >
-            <rect width="20" height="20" rx="5" fill="rgba(255,255,255,0.18)" />
+            <rect width="20" height="20" rx="5" fill="rgba(20,125,122,0.14)" />
             <path
               d="M8 5h4v4h4v4h-4v4H8v-4H4V9h4V5z"
-              fill="white"
+              fill="rgb(20,125,122)"
             />
           </svg>
           Tensaw — Denial Analysis
@@ -55,12 +55,12 @@ export function AppLayout() {
           <TopNavItem
             to="/worklist"
             active={isWorklist}
-            className={
-              isWorklist
-                ? 'bg-white/20 text-white'
-                : 'text-white/80 hover:bg-white/10 hover:text-white'
-            }
-          >
+              className={
+                isWorklist
+                ? 'bg-teal-50 text-teal-700'
+                : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+              }
+            >
             Worklist
           </TopNavItem>
           {has('denial.view_cost') && (
@@ -69,8 +69,8 @@ export function AppLayout() {
               active={isCost}
               className={
                 isCost
-                  ? 'bg-white/20 text-white'
-                  : 'text-white/80 hover:bg-white/10 hover:text-white'
+                  ? 'bg-teal-50 text-teal-700'
+                  : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
               }
             >
               Cost
@@ -108,7 +108,7 @@ export function AppLayout() {
   );
 
   return (
-    <AppShell >
+    <AppShell topNav={topNav}>
       <Outlet />
     </AppShell>
   );

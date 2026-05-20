@@ -11,7 +11,7 @@
  * (deliberately — opening a row detail shouldn't survive page reload).
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useActionQuery } from '@tensaw/actions';
 import { DataExplorer } from '@tensaw/composition/data-display';
 import { useWorklistFilters, type WorklistFilters } from '../../hooks/useWorklistFilters';
@@ -67,26 +67,34 @@ export function WorklistPage() {
 
   const expandedRow = expandedId ? rowsById.get(expandedId) : null;
 
+  useEffect(() => {
+    if (expandedId && !rowsById.has(expandedId)) {
+      setExpandedId(null);
+    }
+  }, [expandedId, rowsById]);
+
   const handleMutated = () => {
     refetch();
     setExpandedId(null);
     setSelectedIds([]);
   };
+  const handleStepMutated = () => {
+    refetch();
+  };
 
   // Toggle row expansion on row click (via actions slot + row selection click)
   function handleSelectionChange(ids: string[]) {
     setSelectedIds(ids);
-    // If a single row was just selected and bulk bar not active, open detail
-    if (ids.length === 1 && selectedIds.length !== 1) {
-      setExpandedId(ids[0] ?? null);
-    } else if (ids.length === 0) {
-      setExpandedId(null);
-    }
+    // Keep expansion deterministic: exactly one selected row => expand it.
+    // Multi-selection => collapse detail panel.
+    if (ids.length === 1) setExpandedId(ids[0] ?? null);
+    else setExpandedId(null);
   }
 
   return (
     <div className="flex flex-col gap-4 p-4">
       <DataExplorer<WorklistRow>
+        className="denial-worklist-explorer"
         rows={visibleRows}
         columns={WORKLIST_COLUMNS}
         totalRows={search.trim() ? visibleRows.length : total}
@@ -146,7 +154,11 @@ export function WorklistPage() {
               ✕ Close
             </button>
           </div>
-          <RowDetailPanel row={expandedRow} onMutated={handleMutated} />
+          <RowDetailPanel
+            row={expandedRow}
+            onMutated={handleMutated}
+            onStepMutated={handleStepMutated}
+          />
         </div>
       )}
     </div>

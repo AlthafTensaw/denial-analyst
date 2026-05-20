@@ -43,7 +43,7 @@ export function ClaimDetailHeader({
 }: ClaimDetailHeaderProps) {
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-secondary py-4">
+      <div className="flex items-center gap-2 text-sm text-foreground/80 py-4">
         <Spinner size="sm" /> Loading claim detail…
       </div>
     );
@@ -57,11 +57,11 @@ export function ClaimDetailHeader({
   }
 
   return (
-    <div className="bg-primary px-4 py-3 border-b border-tertiary flex flex-col gap-3">
+    <div className="bg-surface-raised text-foreground px-4 py-3 border-b border-tertiary flex flex-col gap-3">
       {/* Patient + provider row */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <div className="text-[10px] uppercase tracking-wide text-secondary font-medium mb-1">
+          <div className="text-[10px] uppercase tracking-wide text-foreground/80 font-semibold mb-1">
             Patient
           </div>
           <div className="text-sm mb-0.5">
@@ -72,7 +72,7 @@ export function ClaimDetailHeader({
               purpose="worklist_review"
             />
           </div>
-          <div className="text-xs text-secondary">
+          <div className="text-xs text-foreground/75">
             MRN{' '}
             <PrivacyField
               value={detail.mrn}
@@ -84,13 +84,13 @@ export function ClaimDetailHeader({
           </div>
         </div>
         <div>
-          <div className="text-[10px] uppercase tracking-wide text-secondary font-medium mb-1">
+          <div className="text-[10px] uppercase tracking-wide text-foreground/80 font-semibold mb-1">
             Provider · facility
           </div>
           <div className="text-sm mb-0.5">
             {detail.rendering_provider_name ?? detail.provider_name ?? '—'}
           </div>
-          <div className="text-xs text-secondary">
+          <div className="text-xs text-foreground/75">
             {detail.facility_name ?? '—'}
             {detail.facility_id ? ` · facility #${detail.facility_id}` : ''}
           </div>
@@ -99,28 +99,28 @@ export function ClaimDetailHeader({
 
       {/* Financial breakdown */}
       <div className="pt-2.5 border-t border-tertiary border-dashed">
-        <div className="text-[10px] uppercase tracking-wide text-secondary font-medium mb-2">
+        <div className="text-[10px] uppercase tracking-wide text-foreground/80 font-semibold mb-2">
           Financial
         </div>
         <div className="grid grid-cols-5 gap-1.5 text-xs tabular-nums">
           <div>
-            <div className="text-secondary text-[10px]">Billed</div>
+            <div className="text-foreground/70 text-[10px]">Billed</div>
             <div className="font-medium">{formatMoney(detail.billed)}</div>
           </div>
           <div>
-            <div className="text-secondary text-[10px]">Pri. paid</div>
+            <div className="text-foreground/70 text-[10px]">Pri. paid</div>
             <div>{formatMoney(detail.primary_paid)}</div>
           </div>
           <div>
-            <div className="text-secondary text-[10px]">Sec. paid</div>
+            <div className="text-foreground/70 text-[10px]">Sec. paid</div>
             <div>{formatMoney(detail.secondary_paid)}</div>
           </div>
           <div>
-            <div className="text-secondary text-[10px]">Pt. paid</div>
+            <div className="text-foreground/70 text-[10px]">Pt. paid</div>
             <div>{formatMoney(detail.patient_paid)}</div>
           </div>
           <div>
-            <div className="text-teal-900 text-[10px] font-medium">
+            <div className="text-foreground/80 text-[10px] font-semibold">
               Net pending
             </div>
             <div className="font-medium text-teal-700">
@@ -132,11 +132,11 @@ export function ClaimDetailHeader({
 
       {/* ICD + CPT pills */}
       <div className="flex gap-1.5 flex-wrap items-center text-xs">
-        <span className="text-[10px] uppercase tracking-wide text-secondary font-medium mr-1">
+        <span className="text-[10px] uppercase tracking-wide text-foreground/80 font-semibold mr-1">
           ICD
         </span>
         {detail.icd_codes.length === 0 ? (
-          <span className="text-secondary">—</span>
+          <span className="text-foreground/70">—</span>
         ) : (
           detail.icd_codes.map((code) => (
             <Pill key={`icd-${code}`} variant="subtle">
@@ -144,11 +144,11 @@ export function ClaimDetailHeader({
             </Pill>
           ))
         )}
-        <span className="text-[10px] uppercase tracking-wide text-secondary font-medium ml-3 mr-1">
+        <span className="text-[10px] uppercase tracking-wide text-foreground/80 font-semibold ml-3 mr-1">
           CPT
         </span>
         {detail.cpt_lines.length === 0 ? (
-          <span className="text-secondary">—</span>
+          <span className="text-foreground/70">—</span>
         ) : (
           detail.cpt_lines.map((code) => (
             <Pill key={`cpt-${code}`} variant="subtle">

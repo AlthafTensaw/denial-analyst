@@ -42,9 +42,10 @@ import { OverrideModal } from './OverrideModal';
 interface RowDetailPanelProps {
   row: WorklistRow;
   onMutated: () => void;
+  onStepMutated: () => void;
 }
 
-export function RowDetailPanel({ row, onMutated }: RowDetailPanelProps) {
+export function RowDetailPanel({ row, onMutated, onStepMutated }: RowDetailPanelProps) {
   const { has } = usePermissions();
   const canAct = has('denial.act');
   const canReclassify = has('denial.classify_claim');
@@ -56,21 +57,21 @@ export function RowDetailPanel({ row, onMutated }: RowDetailPanelProps) {
 
   // Phase 1.5 — fat claim detail + denial events fetched on expand
   const { data: claimDetail, isLoading: detailLoading } = useActionQuery<
-    { claimId: number },
+    { claim_id: number },
     ClaimDetail
-  >('denial.claim-detail', { claimId: claim.claim_id });
+  >('denial.claim-detail', { claim_id: claim.claim_id });
 
   const { data: eventsData, isLoading: eventsLoading } = useActionQuery<
-    { claimId: number },
+    { claim_id: number },
     DenialEvent[]
-  >('denial.denial-events', { claimId: claim.claim_id });
+  >('denial.denial-events', { claim_id: claim.claim_id });
 
   const isWorkedOutsideTool =
     claim.current_status_label !== null &&
     claim.current_status_label !== 'Denied';
 
   return (
-    <div className="bg-surface-sunken">
+    <div className="bg-surface-sunken text-foreground">
       <ClaimDetailHeader
         detail={claimDetail}
         loading={detailLoading}
@@ -80,13 +81,13 @@ export function RowDetailPanel({ row, onMutated }: RowDetailPanelProps) {
       {/* Region 1 + 2 side by side */}
       <div className="grid grid-cols-2 border-b border-tertiary">
         <div className="p-4 border-r border-tertiary">
-          <div className="text-[10px] uppercase tracking-wide text-secondary font-medium mb-2">
+          <div className="text-[10px] uppercase tracking-wide text-foreground/80 font-semibold mb-2">
             Classification reasoning
           </div>
           <div className="text-sm leading-relaxed mb-2">
             {classification.reasoning_summary}
           </div>
-          <div className="flex gap-2 items-center text-xs text-secondary">
+          <div className="flex gap-2 items-center text-xs text-foreground/80">
             {classification.rule_id ? (
               <Pill variant="subtle" tone="teal">
                 <code className="font-mono text-xs">
@@ -128,20 +129,20 @@ export function RowDetailPanel({ row, onMutated }: RowDetailPanelProps) {
         <WorkflowStepsList
           classification={classification}
           canAct={canAct}
-          onStepCompleted={() => onMutated()}
-          onAutoComplete={() => onMutated()}
+          onStepCompleted={() => onStepMutated()}
+          onAutoComplete={() => onStepMutated()}
         />
       </div>
 
       {/* State-aware action bar */}
-      <div className="px-4 py-3 bg-primary flex gap-2 items-center">
+      <div className="px-4 py-3 bg-surface-muted border-t border-tertiary flex gap-2 items-center">
         {state === 'recommended' && canAct ? (
           isWorkedOutsideTool ? (
-            <ActionButton<{ classificationId: string; body: { reason: string } }, StateTransitionResponse>
+            <ActionButton<{ classification_id: string; reason: string }, StateTransitionResponse>
               actionId="denial.override"
               request={{
-                classificationId,
-                body: { reason: 'worked_outside_tool' },
+                classification_id: classificationId,
+                reason: 'worked_outside_tool',
               }}
               variant="primary"
               toastOnSuccess="Recorded as worked outside tool"
@@ -150,9 +151,9 @@ export function RowDetailPanel({ row, onMutated }: RowDetailPanelProps) {
               Mark as worked outside tool
             </ActionButton>
           ) : (
-            <ActionButton<{ classificationId: string; body: object }, StateTransitionResponse>
+            <ActionButton<{ classification_id: string }, StateTransitionResponse>
               actionId="denial.accept"
-              request={{ classificationId, body: {} }}
+              request={{ classification_id: classificationId }}
               variant="primary"
               toastOnSuccess="Accepted"
               onSuccess={onMutated}
@@ -172,9 +173,9 @@ export function RowDetailPanel({ row, onMutated }: RowDetailPanelProps) {
         ) : null}
 
         {(state === 'accepted' || state === 'overridden') && canAct ? (
-          <ActionButton<{ classificationId: string; body: object }, StateTransitionResponse>
+          <ActionButton<{ classification_id: string }, StateTransitionResponse>
             actionId="denial.complete"
-            request={{ classificationId, body: {} }}
+            request={{ classification_id: classificationId }}
             variant="primary"
             toastOnSuccess="Marked complete"
             onSuccess={onMutated}
@@ -184,9 +185,9 @@ export function RowDetailPanel({ row, onMutated }: RowDetailPanelProps) {
         ) : null}
 
         {canReclassify && state !== 'completed' ? (
-          <ActionButton<{ claimId: number }, unknown>
+          <ActionButton<{ claim_id: number }, unknown>
             actionId="denial.classify-claim"
-            request={{ claimId: claim.claim_id }}
+            request={{ claim_id: claim.claim_id }}
             variant="ghost"
             toastOnSuccess="Re-classified"
             onSuccess={onMutated}
@@ -196,12 +197,12 @@ export function RowDetailPanel({ row, onMutated }: RowDetailPanelProps) {
         ) : null}
 
         {state === 'completed' ? (
-          <span className="text-sm text-secondary">
+          <span className="text-sm text-foreground/80">
             Completed · classification finalized
           </span>
         ) : null}
 
-        <span className="ml-auto text-xs text-tertiary">
+        <span className="ml-auto text-xs text-foreground/70">
           Classified {new Date(classification.classified_at).toLocaleString()}{' '}
           · tool {classification.tool_version}
         </span>

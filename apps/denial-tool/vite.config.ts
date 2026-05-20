@@ -46,6 +46,7 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5178,
       strictPort: true,
+      allowedHosts: ['sensually-explicit-phobia.ngrok-free.dev'],
     },
     build: {
       target: 'es2022',

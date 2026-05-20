@@ -22,6 +22,7 @@ import { Button } from '@tensaw/design-system/primitives';
 import { Select } from '@tensaw/design-system/forms';
 import { Textarea } from '@tensaw/design-system/primitives';
 import { Alert } from '@tensaw/design-system/feedback';
+import { z } from 'zod';
 import {
   CATEGORY_VALUES,
   OVERRIDE_REASON_COPY,
@@ -29,6 +30,7 @@ import {
   type OverrideReason,
   type OverrideRequest,
   type Classification,
+  type StateTransitionResponse,
 } from '../actions/schemas';
 
 interface OverrideModalProps {
@@ -58,10 +60,13 @@ export function OverrideModal({
       description={`Current: ${classification.primary_category}`}
       size="md"
     >
-      <ActionForm<OverrideRequest, unknown>
+      <ActionForm<OverrideRequest & { classification_id: string }, StateTransitionResponse>
         actionId="denial.override"
-        schema={OverrideRequestSchema}
+        schema={OverrideRequestSchema.extend({
+          classification_id: z.string().uuid(),
+        })}
         defaultValues={{
+          classification_id: classification.classification_id,
           reason: undefined,
           corrected_category: undefined,
           corrected_branch: undefined,
@@ -83,11 +88,13 @@ export function OverrideModal({
 
           return (
             <div className="flex flex-col gap-4">
+              <label className="text-sm font-medium text-foreground">
+                Reason <span className="text-destructive">*</span>
+              </label>
               <Select
-                label="Reason"
-                required
-                value={reason ?? ''}
-                onChange={(v) =>
+                aria-label="Reason"
+                value={reason ?? null}
+                onValueChange={(v) =>
                   methods.setValue('reason', v as OverrideReason, {
                     shouldValidate: true,
                   })
@@ -103,23 +110,28 @@ export function OverrideModal({
               ) : null}
 
               {requiresCategory ? (
-                <Select
-                  label="Corrected category"
-                  required
-                  value={correctedCategory ?? ''}
-                  onChange={(v) =>
-                    methods.setValue('corrected_category', v, {
-                      shouldValidate: true,
-                    })
-                  }
-                  options={CATEGORY_OPTIONS}
-                  placeholder="Pick the correct category…"
-                  error={
-                    categoryMatchesCurrent
-                      ? 'Pick a category different from the current one'
-                      : null
-                  }
-                />
+                <>
+                  <label className="text-sm font-medium text-foreground">
+                    Corrected category <span className="text-destructive">*</span>
+                  </label>
+                  <Select
+                    aria-label="Corrected category"
+                    value={correctedCategory ?? null}
+                    onValueChange={(v) =>
+                      methods.setValue('corrected_category', v, {
+                        shouldValidate: true,
+                      })
+                    }
+                    options={CATEGORY_OPTIONS}
+                    placeholder="Pick the correct category…"
+                    error={categoryMatchesCurrent}
+                  />
+                  {categoryMatchesCurrent ? (
+                    <p className="text-xs text-destructive">
+                      Pick a category different from the current one
+                    </p>
+                  ) : null}
+                </>
               ) : null}
 
               <Textarea

@@ -57,16 +57,15 @@ export function WorkflowStepsList({
 
   const [fireStep, { isLoading: stepLoading }] =
     useActionMutation<
-      { classificationId: string; stepNumber: number; body: { notes?: string } },
+      { classification_id: string; step_number: number; notes?: string },
       StepCompletionResponse
     >('denial.step-complete');
 
   const handleCheck = (step: WorkflowStep) => {
     if (!canAct || step.completed_at) return;
     fireStep({
-      classificationId: classification.classification_id,
-      stepNumber: step.step,
-      body: {},
+      classification_id: classification.classification_id,
+      step_number: step.step,
     })
       .then((resp) => {
         onStepCompleted(resp);
@@ -99,13 +98,13 @@ export function WorkflowStepsList({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between items-center mb-1">
-        <span className="text-xs uppercase tracking-wide text-secondary font-medium">
+        <span className="text-xs uppercase tracking-wide text-foreground/80 font-semibold">
           Recommended action plan ·{' '}
           {steps.filter((s) => s.completed_at).length} of {steps.length} done
         </span>
-        <span className="text-xs text-secondary">
+        <span className="text-xs text-foreground/75">
           Owner: {classification.recommended_owner} · SLA{' '}
-          <span className="text-warning">
+          <span className="text-amber-700 font-medium">
             {steps[0]?.sla_days ?? 0}d
           </span>
         </span>
@@ -114,7 +113,7 @@ export function WorkflowStepsList({
       {steps.map((step) => {
         const isDone = !!step.completed_at;
         const isNext = !isDone && step === firstIncomplete;
-        const isClickable = canAct && isNext && !stepLoading;
+        const isClickable = canAct && !isDone && !stepLoading;
 
         const row = (
           <div
@@ -122,27 +121,27 @@ export function WorkflowStepsList({
             className={[
               'flex items-start gap-2.5 px-3 py-2 rounded-md',
               isDone
-                ? 'bg-secondary opacity-70'
+                ? 'bg-surface-muted'
                 : isNext
                   ? 'bg-teal-50 border-l-4 border-teal-700'
-                  : 'bg-primary border border-tertiary opacity-60',
+                  : 'bg-surface-raised border border-tertiary',
             ].join(' ')}
           >
             <Checkbox
               checked={isDone}
               disabled={!isClickable}
-              onChange={() => handleCheck(step)}
-              ariaLabel={`Mark step ${step.step} complete: ${step.action}`}
+              onCheckedChange={() => handleCheck(step)}
+              aria-label={`Mark step ${step.step} complete: ${step.action}`}
             />
             <div className="flex-1 text-sm">
               <div
                 className={
-                  isDone ? 'line-through text-secondary' : 'font-medium'
+                  isDone ? 'line-through text-foreground/75' : 'font-medium text-foreground'
                 }
               >
                 {step.action}
               </div>
-              <div className="text-xs text-secondary mt-0.5">
+              <div className="text-xs text-foreground/75 mt-0.5">
                 {isDone ? (
                   <>
                     ✓ {step.completed_by ?? 'someone'} ·{' '}
@@ -171,7 +170,7 @@ export function WorkflowStepsList({
                 ? 'Completed'
                 : !canAct
                   ? 'Read-only'
-                  : 'Complete earlier steps first'
+                  : 'Saving...'
             }
           >
             {row}

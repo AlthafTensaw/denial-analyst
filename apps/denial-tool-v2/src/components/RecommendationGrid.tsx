@@ -195,7 +195,8 @@ export function RecommendationGrid({
 const gridContainerStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  background: 'white',
+  background: 'var(--tw-color-surface-raised)',
+  color: 'var(--tw-color-text-primary)',
   border: '1px solid var(--tw-color-border)',
   borderRadius: 12,
   overflow: 'hidden',
@@ -204,10 +205,10 @@ const gridContainerStyle: React.CSSProperties = {
 const headerRowStyle: React.CSSProperties = {
   display: 'grid',
   alignItems: 'center',
-  background: 'var(--tw-color-teal-50)',
-  color: 'var(--tw-color-teal-700)',
+  background: 'var(--tw-color-surface-muted)',
+  color: 'var(--tw-color-text-primary)',
   fontSize: '0.8125rem',
-  fontWeight: 500,
+  fontWeight: 600,
   borderBottom: '1px solid var(--tw-color-border)',
 };
 
@@ -229,6 +230,7 @@ const rowStyle: React.CSSProperties = {
   alignItems: 'center',
   borderBottom: '1px solid var(--tw-color-border)',
   fontSize: '0.875rem',
+  color: 'var(--tw-color-text-primary)',
   cursor: 'pointer',
 };
 
@@ -236,6 +238,7 @@ const cellStyle: React.CSSProperties = {
   padding: '10px 14px',
   display: 'flex',
   alignItems: 'center',
+  color: 'var(--tw-color-text-primary)',
 };
 
 const expansionStyle: React.CSSProperties = {

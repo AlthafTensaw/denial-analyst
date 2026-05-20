@@ -3,3 +3,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* denial-tool worklist readability tuning */
+.denial-worklist-explorer {
+  color: var(--tw-color-text-primary);
+}
+
+.denial-worklist-explorer [role='columnheader'],
+.denial-worklist-explorer [role='cell'] {
+  color: var(--tw-color-text-primary);
+}
+
+.denial-worklist-explorer [role='columnheader'] {
+  font-weight: 600;
+  background: var(--tw-color-surface-muted);
+}
+
+.denial-worklist-explorer .text-secondary,
+.denial-worklist-explorer .text-muted-foreground {
+  color: var(--tw-color-text-secondary) !important;
+  opacity: 0.95;
+}
+
+.denial-worklist-explorer [role='cell'] .text-xs,
+.denial-worklist-explorer [role='cell'] .text-\[10px\] {
+  color: var(--tw-color-text-secondary);
+}

@@ -6,9 +6,9 @@
  * API: onValueChange (not onChange), size="sm" (not compact), aria-label.
  */
 
-import { FilterStrip } from '@tensaw/worklist';
 import { Select } from '@tensaw/design-system/forms';
 import { Pill } from '@tensaw/design-system/feedback';
+import type { ReactNode } from 'react';
 import {
   CATEGORY_VALUES,
   PriorityChipEnum,
@@ -63,92 +63,149 @@ export function DenialFilterStrip({ filters, onChange }: DenialFilterStripProps)
     onChange({ ...filters, ...patch });
 
   return (
-    <FilterStrip>
-      {/* State */}
-      <Select
-        value={filters.state ?? 'recommended'}
-        onValueChange={(v) => update({ state: v as ClassificationState })}
-        options={STATE_OPTIONS}
-        size="sm"
-        aria-label="State"
-      />
+    <div style={stripStyle}>
+      <FilterCell label="State">
+        <Select
+          value={filters.state ?? 'recommended'}
+          onValueChange={(v) => update({ state: v as ClassificationState })}
+          options={STATE_OPTIONS}
+          size="sm"
+          aria-label="State"
+        />
+      </FilterCell>
 
-      {/* Category */}
-      <Select
-        value={filters.primary_category ?? ANY}
-        onValueChange={(v) =>
-          update({ primary_category: v === ANY ? undefined : v })
-        }
-        options={CATEGORY_OPTIONS}
-        size="sm"
-        aria-label="Category"
-      />
+      <FilterCell label="Category">
+        <Select
+          value={filters.primary_category ?? ANY}
+          onValueChange={(v) =>
+            update({ primary_category: v === ANY ? undefined : v })
+          }
+          options={CATEGORY_OPTIONS}
+          size="sm"
+          aria-label="Category"
+        />
+      </FilterCell>
 
-      {/* Payer */}
-      <Select
-        value={filters.payer_name ?? ANY}
-        onValueChange={(v) =>
-          update({ payer_name: v === ANY ? undefined : v })
-        }
-        options={PAYER_OPTIONS}
-        size="sm"
-        aria-label="Payer"
-      />
+      <FilterCell label="Payer">
+        <Select
+          value={filters.payer_name ?? ANY}
+          onValueChange={(v) =>
+            update({ payer_name: v === ANY ? undefined : v })
+          }
+          options={PAYER_OPTIONS}
+          size="sm"
+          aria-label="Payer"
+        />
+      </FilterCell>
 
-      {/* Owner */}
-      <Select
-        value={filters.recommended_owner ?? ANY}
-        onValueChange={(v) =>
-          update({ recommended_owner: v === ANY ? undefined : v })
-        }
-        options={OWNER_OPTIONS}
-        size="sm"
-        aria-label="Owner"
-      />
+      <FilterCell label="Owner">
+        <Select
+          value={filters.recommended_owner ?? ANY}
+          onValueChange={(v) =>
+            update({ recommended_owner: v === ANY ? undefined : v })
+          }
+          options={OWNER_OPTIONS}
+          size="sm"
+          aria-label="Owner"
+        />
+      </FilterCell>
 
-      {/* Aging */}
-      <Select
-        value={filters.age_bucket ?? ANY}
-        onValueChange={(v) =>
-          update({ age_bucket: v === ANY ? undefined : v })
-        }
-        options={AGING_OPTIONS}
-        size="sm"
-        aria-label="Aging"
-      />
+      <FilterCell label="Aging">
+        <Select
+          value={filters.age_bucket ?? ANY}
+          onValueChange={(v) =>
+            update({ age_bucket: v === ANY ? undefined : v })
+          }
+          options={AGING_OPTIONS}
+          size="sm"
+          aria-label="Aging"
+        />
+      </FilterCell>
 
-      {/* Priority */}
-      <Select
-        value={filters.priority_chip ?? ANY}
-        onValueChange={(v) =>
-          update({
-            priority_chip: v === ANY ? undefined : (v as PriorityChip),
-          })
-        }
-        options={PRIORITY_OPTIONS}
-        size="sm"
-        aria-label="Priority"
-      />
+      <FilterCell label="Priority">
+        <Select
+          value={filters.priority_chip ?? ANY}
+          onValueChange={(v) =>
+            update({
+              priority_chip: v === ANY ? undefined : (v as PriorityChip),
+            })
+          }
+          options={PRIORITY_OPTIONS}
+          size="sm"
+          aria-label="Priority"
+        />
+      </FilterCell>
 
-      {/* Review-only toggle */}
-      {filters.requires_human_review ? (
-        <Pill
-          variant="subtle"
-          tone="amber"
-          removable
-          onRemove={() => update({ requires_human_review: undefined })}
-        >
-          Review only
-        </Pill>
-      ) : (
-        <button
-          type="button"
-          className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-accent transition-colors"
-          onClick={() => update({ requires_human_review: true })}
-        >
-          + Review only
-        </button>
-      )}
-    </FilterStrip>
+      <div style={reviewStyle}>
+        {filters.requires_human_review ? (
+          <Pill
+            variant="subtle"
+            tone="amber"
+            removable
+            onRemove={() => update({ requires_human_review: undefined })}
+          >
+            Review only
+          </Pill>
+        ) : (
+          <button
+            type="button"
+            className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-accent transition-colors"
+            onClick={() => update({ requires_human_review: true })}
+          >
+            + Review only
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
+
+function FilterCell({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div style={cellStyle}>
+      <span style={labelStyle}>{label}</span>
+      <div style={controlStyle}>{children}</div>
+    </div>
+  );
+}
+
+const stripStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  alignItems: 'end',
+  gap: 8,
+  padding: 10,
+  border: '1px solid var(--tw-color-border-default, var(--tw-color-border))',
+  borderRadius: 8,
+  background: 'var(--tw-color-surface-raised, #fff)',
+};
+
+const cellStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 4,
+  minWidth: 170,
+};
+
+const labelStyle: React.CSSProperties = {
+  fontSize: '0.75rem',
+  color: 'var(--tw-color-text-secondary)',
+  fontWeight: 500,
+};
+
+const controlStyle: React.CSSProperties = {
+  minWidth: 0,
+};
+
+const reviewStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  marginLeft: 'auto',
+};
