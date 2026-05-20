@@ -25,6 +25,7 @@ const httpsUrl = z
       v.startsWith('/') ||
       v.startsWith('https://') ||
       v.startsWith('http://localhost') ||
+      v.startsWith('http://127.0.0.1') ||
       v.startsWith('http://34.236.125.125'),
     'must be a valid URL or a relative path (starting with /)',
   );

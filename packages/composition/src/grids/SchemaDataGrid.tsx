@@ -170,7 +170,7 @@ export function SchemaDataGrid<TRow>({
         cell: ({ row, getValue }) =>
           col.cell
             ? col.cell({ row: row.original, value: getValue() })
-            : (getValue() as ReactNode) ?? null,
+            : ((getValue() as ReactNode) ?? null),
         enableSorting: col.sortable !== false,
       };
       if (col.width !== undefined) def.size = typeof col.width === 'number' ? col.width : undefined;
@@ -200,8 +200,7 @@ export function SchemaDataGrid<TRow>({
             : String(index);
         },
     onSortingChange: (updater) => {
-      const next =
-        typeof updater === 'function' ? updater(sortingState) : updater;
+      const next = typeof updater === 'function' ? updater(sortingState) : updater;
       if (isSortControlled) {
         const first = next[0];
         if (!first) {
@@ -217,8 +216,7 @@ export function SchemaDataGrid<TRow>({
       }
     },
     onRowSelectionChange: (updater) => {
-      const next =
-        typeof updater === 'function' ? updater(rowSelection) : updater;
+      const next = typeof updater === 'function' ? updater(rowSelection) : updater;
       if (isSelectionControlled) {
         onSelectionChange?.(next);
       } else {
@@ -226,8 +224,7 @@ export function SchemaDataGrid<TRow>({
       }
     },
     onColumnVisibilityChange: (updater) => {
-      const next =
-        typeof updater === 'function' ? updater(visibilityState) : updater;
+      const next = typeof updater === 'function' ? updater(visibilityState) : updater;
       if (isVisibilityControlled) {
         onColumnVisibilityChange(next);
       } else {

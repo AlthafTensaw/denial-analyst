@@ -36,13 +36,7 @@
  * design-system). Pagination lives in design-system; everything else
  * follows the spec's API contract.
  */
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Alert,
   Button,
@@ -60,11 +54,7 @@ import {
   Switch,
 } from '@tensaw/design-system';
 
-import {
-  SchemaDataGrid,
-  type GridSortState,
-  type SchemaDataGridColumn,
-} from '../../grids';
+import { SchemaDataGrid, type GridSortState, type SchemaDataGridColumn } from '../../grids';
 
 export interface DataExplorerProps<TRow> {
   // Data
@@ -201,9 +191,7 @@ export function DataExplorer<TRow>({
   // Record<string, boolean> (true = visible, false = hidden).
   const visibilityMap = useMemo<Record<string, boolean> | undefined>(() => {
     if (!hiddenColumns) return undefined;
-    return Object.fromEntries(
-      columns.map((c) => [c.id, !hiddenColumns.includes(c.id)]),
-    );
+    return Object.fromEntries(columns.map((c) => [c.id, !hiddenColumns.includes(c.id)]));
   }, [hiddenColumns, columns]);
 
   function handleVisibilityMapChange(next: Record<string, boolean>): void {
@@ -228,14 +216,10 @@ export function DataExplorer<TRow>({
   // The grid replacement state — error wins, then loading, then empty
   const showError = !!error;
   const showLoading = !showError && !!loading;
-  const showEmpty =
-    !showError && !showLoading && rows.length === 0 && empty !== undefined;
+  const showEmpty = !showError && !showLoading && rows.length === 0 && empty !== undefined;
 
   // Toggleable columns are non-required.
-  const toggleableColumns = useMemo(
-    () => columns.filter((c) => !c.required),
-    [columns],
-  );
+  const toggleableColumns = useMemo(() => columns.filter((c) => !c.required), [columns]);
 
   return (
     <section
@@ -259,7 +243,9 @@ export function DataExplorer<TRow>({
             type="search"
             placeholder={searchPlaceholder ?? 'Search…'}
             value={localSearch}
-            onChange={(e) => { handleSearchInput(e.target.value); }}
+            onChange={(e) => {
+              handleSearchInput(e.target.value);
+            }}
             className="pl-8"
             aria-label={searchPlaceholder ?? 'Search'}
           />
@@ -270,9 +256,9 @@ export function DataExplorer<TRow>({
             Compact
             <Switch
               checked={density === 'compact'}
-              onCheckedChange={(c) =>
-                { onDensityChange(c ? 'compact' : 'comfortable'); }
-              }
+              onCheckedChange={(c) => {
+                onDensityChange(c ? 'compact' : 'comfortable');
+              }}
               aria-label="Compact density"
             />
           </label>
@@ -297,14 +283,10 @@ export function DataExplorer<TRow>({
               return (
                 <DropdownMenuItem
                   key={col.id}
-                  onSelect={() => { toggleColumnVisible(col.id); }}
-                  icon={
-                    <Checkbox
-                      checked={!isHidden}
-                      tabIndex={-1}
-                      aria-hidden="true"
-                    />
-                  }
+                  onSelect={() => {
+                    toggleColumnVisible(col.id);
+                  }}
+                  icon={<Checkbox checked={!isHidden} tabIndex={-1} aria-hidden="true" />}
                 >
                   {col.header}
                 </DropdownMenuItem>
@@ -314,9 +296,7 @@ export function DataExplorer<TRow>({
         )}
       </div>
 
-      {filters !== undefined && (
-        <div className="flex flex-wrap items-center gap-2">{filters}</div>
-      )}
+      {filters !== undefined && <div className="flex flex-wrap items-center gap-2">{filters}</div>}
 
       {showBulkRow && (
         <div
@@ -334,8 +314,7 @@ export function DataExplorer<TRow>({
       <div
         style={{
           height: typeof height === 'number' ? `${height}px` : height,
-          maxHeight:
-            typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight,
+          maxHeight: typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight,
         }}
         className="overflow-auto rounded-md border border-border"
       >
@@ -364,9 +343,7 @@ export function DataExplorer<TRow>({
           <div className="p-6">
             <EmptyState
               title={empty.title}
-              {...(empty.description !== undefined
-                ? { description: empty.description }
-                : {})}
+              {...(empty.description !== undefined ? { description: empty.description } : {})}
               {...(empty.action !== undefined ? { action: empty.action } : {})}
             />
           </div>

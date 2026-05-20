@@ -68,7 +68,7 @@ function problem(
   title: string,
   detail: string,
   extra: Record<string, unknown> = {},
-) {
+): HttpResponse {
   const body: ProblemBody = {
     type: 'about:blank',
     title,
