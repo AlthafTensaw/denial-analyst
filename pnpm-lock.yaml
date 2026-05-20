@@ -136,6 +136,85 @@ importers:
         specifier: 2.1.2
         version: 2.1.2(@types/node@22.7.4)(jsdom@25.0.1)(msw@2.4.9(typescript@5.9.3))
 
+  apps/denial-tool-v2:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.59.0
+        version: 5.100.9(react@18.3.1)
+      '@tensaw/actions':
+        specifier: workspace:*
+        version: link:../../packages/actions
+      '@tensaw/codes':
+        specifier: workspace:*
+        version: link:../../packages/codes
+      '@tensaw/composition':
+        specifier: workspace:*
+        version: link:../../packages/composition
+      '@tensaw/design-system':
+        specifier: workspace:*
+        version: link:../../packages/design-system
+      '@tensaw/mock-server':
+        specifier: workspace:*
+        version: link:../../packages/mock-server
+      '@tensaw/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
+      '@tensaw/visualization':
+        specifier: workspace:*
+        version: link:../../packages/visualization
+      '@tensaw/wired-components':
+        specifier: workspace:*
+        version: link:../../packages/wired-components
+      '@tensaw/worklist':
+        specifier: workspace:*
+        version: link:../../packages/worklist
+      lucide-react:
+        specifier: ^0.451.0
+        version: 0.451.0(react@18.3.1)
+      msw:
+        specifier: 2.4.9
+        version: 2.4.9(typescript@5.9.3)
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: 18.3.1
+        version: 18.3.1(react@18.3.1)
+      react-router-dom:
+        specifier: 6.26.2
+        version: 6.26.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zod:
+        specifier: 3.23.8
+        version: 3.23.8
+    devDependencies:
+      '@playwright/test':
+        specifier: 1.48.0
+        version: 1.48.0
+      '@testing-library/react':
+        specifier: 16.0.1
+        version: 16.0.1(@testing-library/dom@10.4.1)(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@testing-library/user-event':
+        specifier: 14.5.2
+        version: 14.5.2(@testing-library/dom@10.4.1)
+      '@types/react':
+        specifier: 18.3.11
+        version: 18.3.11
+      '@types/react-dom':
+        specifier: 18.3.0
+        version: 18.3.0
+      '@vitejs/plugin-react':
+        specifier: 4.3.2
+        version: 4.3.2(vite@5.4.8(@types/node@22.7.4))
+      jsdom:
+        specifier: 25.0.1
+        version: 25.0.1
+      vite:
+        specifier: 5.4.8
+        version: 5.4.8(@types/node@22.7.4)
+      vitest:
+        specifier: 2.1.2
+        version: 2.1.2(@types/node@22.7.4)(jsdom@25.0.1)(msw@2.4.9(typescript@5.9.3))
+
   apps/operations-console:
     dependencies:
       '@tanstack/react-query':

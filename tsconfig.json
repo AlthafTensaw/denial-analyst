@@ -15,6 +15,7 @@
     { "path": "./packages/platform-rules" },
     { "path": "./apps/patient" },
     { "path": "./apps/operations-console" },
-    { "path": "./apps/denial-tool" }
+    { "path": "./apps/denial-tool" },
+    { "path": "./apps/denial-tool-v2" }
   ]
 }

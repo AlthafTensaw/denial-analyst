@@ -1,0 +1,37 @@
+:root {
+  --tw-color-page-background: var(--tw-color-surface-bg);
+  --tw-color-bg-secondary: var(--tw-color-surface-muted);
+  --tw-color-border: var(--tw-color-border-default);
+
+  --tw-color-teal-50: var(--tw-color-table-header-bg);
+  --tw-color-teal-200: var(--tw-color-border-muted);
+  --tw-color-teal-600: var(--tw-color-brand-primary);
+  --tw-color-teal-700: var(--tw-color-brand-header);
+  --tw-color-teal-800: var(--tw-color-brand-primary-hover);
+
+  --tw-color-gray-50: var(--tw-color-surface-muted);
+  --tw-color-gray-100: var(--tw-color-input-disabled-bg);
+  --tw-color-gray-200: var(--tw-color-border-muted);
+  --tw-color-gray-600: var(--tw-color-text-secondary);
+  --tw-color-gray-700: var(--tw-color-text-primary);
+  --tw-color-gray-800: var(--tw-color-text-primary);
+  --tw-color-gray-900: var(--tw-color-text-primary);
+
+  --tw-color-red-50: var(--tw-color-status-error-bg);
+  --tw-color-red-100: var(--tw-color-status-error-bg);
+  --tw-color-red-600: var(--tw-color-text-danger);
+  --tw-color-red-700: var(--tw-color-status-error-fg);
+  --tw-color-red-800: var(--tw-color-status-error-fg);
+
+  --tw-color-amber-50: var(--tw-color-status-warning-bg);
+  --tw-color-amber-100: var(--tw-color-status-warning-bg);
+  --tw-color-amber-200: var(--tw-color-border-muted);
+  --tw-color-amber-600: var(--tw-color-status-warning-fg);
+  --tw-color-amber-700: var(--tw-color-status-warning-fg);
+  --tw-color-amber-800: var(--tw-color-status-warning-fg);
+
+  --tw-color-blue-50: var(--tw-color-status-info-bg);
+  --tw-color-blue-700: var(--tw-color-status-info-fg);
+  --tw-color-green-50: var(--tw-color-status-success-bg);
+  --tw-color-green-800: var(--tw-color-status-success-fg);
+}
