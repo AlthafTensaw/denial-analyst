@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: 5175,
+      port: 5178,
       strictPort: true,
     },
     build: {
